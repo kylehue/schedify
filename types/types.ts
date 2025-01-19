@@ -9,11 +9,13 @@ export interface Section {
    code: string;
    description?: string;
    isEnabled: boolean;
-   timeslots: Timeslot[];
+   timeslots: Map<string | number, Timeslot>;
 }
 
 export interface Timeslot {
-   from: number;
-   to: number;
+   id: string | number;
+   from: string;
+   to: string;
    isEnabled: boolean;
+   day: keyof typeof daysMap;
 }

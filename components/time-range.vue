@@ -3,7 +3,7 @@
       <NTimePicker
          class="flex-1"
          v-model:formatted-value="from"
-         format="hh:mm aa"
+         :format="defaultTimeFormat"
          :minutes="[0, 15, 30, 45]"
          use12-hours
       ></NTimePicker>
@@ -11,7 +11,7 @@
       <NTimePicker
          class="flex-1"
          v-model:formatted-value="to"
-         format="hh:mm aa"
+         :format="defaultTimeFormat"
          :minutes="[0, 15, 30, 45]"
          use12-hours
       ></NTimePicker>

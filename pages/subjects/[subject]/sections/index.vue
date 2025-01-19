@@ -26,6 +26,7 @@
             <div v-else class="flex flex-row flex-wrap">
                <div
                   v-for="section in subject.sections.values()"
+                  :key="section.code"
                   class="w-1/3 max-md:w-full max-xl:w-1/2 p-2"
                >
                   <Section :code="section.code"> </Section>

@@ -2,7 +2,7 @@
    <div
       class="w-full h-full flex flex-col items-start justify-start gap-10 p-10 overflow-y-scroll"
    >
-      <NCard>
+      <NCard class="min-h-[500px]">
          <template #header>
             <Navigator
                title="Time slots"
@@ -23,21 +23,36 @@
             ></Navigator>
          </template>
          <template #default>
-            <NTabs type="line" animated v-model:value="currentTab">
+            <NTabs
+               type="line"
+               animated
+               v-model:value="currentTab"
+               class="h-full w-full"
+               pane-class="h-full w-full"
+               pane-wrapper-class="h-full w-full"
+            >
                <NTabPane v-for="day in days" :name="day.key" :tab="day.label">
-                  <div class="flex flex-row flex-wrap">
+                  <NEmpty
+                     class="h-full w-full flex items-center justify-center"
+                     v-if="timeslotsDayMapped[day.key].length <= 0"
+                  ></NEmpty>
+                  <div v-else class="flex flex-row flex-wrap">
                      <div
-                        v-for="x in 4"
+                        v-for="timeslot in timeslotsDayMapped[day.key]"
+                        :key="timeslot.id"
                         class="w-1/3 max-md:w-full max-xl:w-1/2 p-2"
                      >
                         <NBadge class="w-full" dot :show="true">
-                           <Timeslot></Timeslot>
+                           <Timeslot
+                              :id="timeslot.id"
+                              v-model:time-from="timeslot.from"
+                              v-model:time-to="timeslot.to"
+                           ></Timeslot>
                         </NBadge>
                      </div>
                   </div>
                </NTabPane>
             </NTabs>
-            <!-- <NEmpty></NEmpty> -->
          </template>
          <template #action>
             <div class="flex w-full justify-between gap-2">
@@ -91,6 +106,7 @@ import {
    useDialog,
 } from "naive-ui";
 import { PhPlus, PhTrash, PhClock } from "@phosphor-icons/vue";
+import type { Timeslot } from "~/types/types";
 
 const route = useRoute();
 const dialog = useDialog();
@@ -99,14 +115,59 @@ const isAddTimeslotDialogShown = ref(false);
 const addTimeslotFrom = ref("12:00 AM");
 const addTimeslotTo = ref("12:00 AM");
 const addTimeslotDay = ref(currentTab.value);
+const store = useStore();
+const subject = store.getSubject(route.params.subject as string)!;
+const section = store.getSection(subject.code, route.params.section as string)!;
+const timeslotsDayMapped = computed(() => {
+   let map: Record<keyof typeof daysMap, Timeslot[]> = {
+      mon: [],
+      tue: [],
+      wed: [],
+      fri: [],
+      sat: [],
+      sun: [],
+      thu: [],
+   };
 
+   for (let timeslot of section.timeslots.values()) {
+      map[timeslot.day].push(timeslot);
+   }
+
+   return map;
+});
+
+// Sync the day to modal dialog prompt
 watch(currentTab, (x) => (addTimeslotDay.value = x));
 
 function addTimeslot() {
-   addTimeslotFrom.value = "12:00 AM";
-   addTimeslotTo.value = "12:00 AM";
-   currentTab.value = addTimeslotDay.value;
-   isAddTimeslotDialogShown.value = false;
+   let from = addTimeslotFrom.value;
+   let to = addTimeslotTo.value;
+   let day = addTimeslotDay.value;
+
+   const add = () => {
+      store.addTimeslot(subject.code, section.code, Date.now(), from, to, day);
+      addTimeslotFrom.value = "12:00 AM";
+      addTimeslotTo.value = "12:00 AM";
+      currentTab.value = addTimeslotDay.value;
+      isAddTimeslotDialogShown.value = false;
+   };
+
+   // if (store.getSection(subject.code, code)) {
+   //    dialog.warning({
+   //       title: "Duplicate section",
+   //       content:
+   //          "This section already exists! Do you want to replace it instead?",
+   //       negativeText: "Cancel",
+   //       positiveText: "Replace",
+   //       onPositiveClick(e) {
+   //          add();
+   //       },
+   //    });
+   // } else {
+   //    add();
+   // }
+
+   add();
 }
 
 function goBack() {
@@ -123,7 +184,7 @@ function clearAll() {
       positiveText: "Clear all",
       negativeText: "Cancel",
       onPositiveClick(e) {
-         // test
+         store.clearTimeslot(subject.code, section.code);
       },
    });
 }
@@ -137,7 +198,7 @@ function clearAllCurrentDay() {
       positiveText: "Clear all",
       negativeText: "Cancel",
       onPositiveClick(e) {
-         // test
+         store.clearTimeslotInDay(subject.code, section.code, currentTab.value);
       },
    });
 }

@@ -37,7 +37,7 @@ export const useStore = defineStore("store", () => {
          code,
          description,
          isEnabled: true,
-         timeslots: [],
+         timeslots: new Map(),
       };
 
       getSubject(subjectCode)!.sections.set(code, section);
@@ -57,6 +57,59 @@ export const useStore = defineStore("store", () => {
       getSubject(subjectCode)!.sections.clear();
    }
 
+   function addTimeslot(
+      subjectCode: string,
+      sectionCode: string,
+      id: string | number,
+      from: string,
+      to: string,
+      day: keyof typeof daysMap
+   ) {
+      const timeslot: Timeslot = {
+         id,
+         from,
+         to,
+         isEnabled: true,
+         day,
+      };
+
+      getSection(subjectCode, sectionCode)!.timeslots.set(id, timeslot);
+
+      return timeslot;
+   }
+
+   function getTimeslot(
+      subjectCode: string,
+      sectionCode: string,
+      id: string | number
+   ) {
+      return getSection(subjectCode, sectionCode)!.timeslots.get(id);
+   }
+
+   function removeTimeslot(
+      subjectCode: string,
+      sectionCode: string,
+      id: string | number
+   ) {
+      getSection(subjectCode, sectionCode)!.timeslots.delete(id);
+   }
+
+   function clearTimeslot(subjectCode: string, sectionCode: string) {
+      getSection(subjectCode, sectionCode)!.timeslots.clear();
+   }
+
+   function clearTimeslotInDay(
+      subjectCode: string,
+      sectionCode: string,
+      day: keyof typeof daysMap
+   ) {
+      let timeslots = getSection(subjectCode, sectionCode)!.timeslots;
+      for (let [id, timeslot] of timeslots) {
+         if (timeslot.day !== day) continue;
+         timeslots.delete(id);
+      }
+   }
+
    return {
       subjects,
       addSubject,
@@ -67,5 +120,10 @@ export const useStore = defineStore("store", () => {
       getSection,
       removeSection,
       clearSections,
+      addTimeslot,
+      getTimeslot,
+      removeTimeslot,
+      clearTimeslot,
+      clearTimeslotInDay,
    };
 });

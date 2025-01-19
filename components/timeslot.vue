@@ -1,5 +1,10 @@
 <template>
-   <NCard>
+   <NCard
+      :class="{
+         'opacity-50': !timeslot.isEnabled,
+      }"
+      class="transition-opacity"
+   >
       <template #default>
          <div class="flex flex-row items-center gap-2">
             <TimeRange v-model:from="timeFrom" v-model:to="timeTo" />
@@ -7,7 +12,11 @@
       </template>
       <template #action>
          <div class="flex gap-2 justify-between">
-            <NButton tertiary>Disable</NButton>
+            <NButton
+               @click="timeslot.isEnabled = !timeslot.isEnabled"
+               tertiary
+               >{{ timeslot.isEnabled ? "Disable" : "Enable" }}</NButton
+            >
             <NButton @click="remove" type="error" tertiary circle>
                <template #icon>
                   <PhTrash></PhTrash>
@@ -22,10 +31,18 @@
 import { NCard, NButton, NText, NTimePicker, useDialog } from "naive-ui";
 import { PhTrash } from "@phosphor-icons/vue";
 
+const props = defineProps<{
+   id: string | number;
+}>();
 const dialog = useDialog();
 const route = useRoute();
-const timeFrom = ref("12:00 AM");
-const timeTo = ref("12:00 AM");
+const timeFrom = defineModel("timeFrom", { default: "12:00 AM" });
+const timeTo = defineModel("timeTo", { default: "12:00 AM" });
+const store = useStore();
+const subject = store.getSubject(route.params.subject as string)!;
+const section = store.getSection(subject.code, route.params.section as string)!;
+const timeslot = store.getTimeslot(subject.code, section.code, props.id)!;
+
 function remove() {
    dialog.warning({
       title: "Remove time slot",
@@ -33,7 +50,7 @@ function remove() {
       positiveText: "Remove",
       negativeText: "Cancel",
       onPositiveClick(e) {
-         // test
+         store.removeTimeslot(subject.code, section.code, timeslot.id);
       },
    });
 }

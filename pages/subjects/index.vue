@@ -12,6 +12,7 @@
             <div v-else class="flex flex-row flex-wrap">
                <div
                   v-for="subject in store.subjects.values()"
+                  :key="subject.code"
                   class="w-1/3 max-md:w-full max-xl:w-1/2 p-2"
                >
                   <Subject :code="subject.code"> </Subject>
