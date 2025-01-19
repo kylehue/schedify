@@ -21,11 +21,11 @@
          <template #default>
             <NEmpty
                class="h-full w-full flex items-center justify-center"
-               v-if="sectionsCount <= 0"
+               v-if="subject.sections.size <= 0"
             ></NEmpty>
             <div v-else class="flex flex-row flex-wrap">
                <div
-                  v-for="section in sections"
+                  v-for="section in subject.sections.values()"
                   class="w-1/3 max-md:w-full max-xl:w-1/2 p-2"
                >
                   <Section :code="section.code"> </Section>
@@ -76,27 +76,20 @@ const isAddSectionDialogShown = ref(false);
 const addSectionCode = ref("");
 const addSectionDescription = ref("");
 const store = useStore();
-const subjectCode = route.params.subject as string;
-const sections = store.getSubjectSections(subjectCode);
-
-const sectionsCount = computed(() => {
-   let count = 0;
-   for (let x in sections) count++;
-   return count;
-});
+const subject = store.getSubject(route.params.subject as string)!;
 
 function addSection() {
    let code = addSectionCode.value.trim();
    let description = addSectionDescription.value;
 
    const add = () => {
-      store.addSection(subjectCode, code, description);
+      store.addSection(subject.code, code, description);
       addSectionCode.value = "";
       addSectionDescription.value = "";
       isAddSectionDialogShown.value = false;
    };
 
-   if (store.getSection(subjectCode, code)) {
+   if (store.getSection(subject.code, code)) {
       dialog.warning({
          title: "Duplicate section",
          content:
@@ -123,7 +116,7 @@ function clearAll() {
       positiveText: "Clear all",
       negativeText: "Cancel",
       onPositiveClick(e) {
-         store.clearSections(subjectCode);
+         store.clearSections(subject.code);
       },
    });
 }

@@ -2,7 +2,7 @@ export interface Subject {
    code: string;
    description?: string;
    isEnabled: boolean;
-   sections: Record<string, Section>;
+   sections: Map<string, Section>;
 }
 
 export interface Section {

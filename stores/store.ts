@@ -2,35 +2,30 @@ import type { Subject, Section, Timeslot } from "~/types/types";
 import { IntervalTree } from "my-dsa";
 
 export const useStore = defineStore("store", () => {
-   const subjects = reactive<Record<string, Subject>>({});
-   // let individualIT: Record<string, Record<string, IntervalTree>> = {};
-   // let globalIT = new IntervalTree();
+   const subjects = reactive<Map<string, Subject>>(new Map());
 
    function addSubject(code: string, description?: string) {
       const subject: Subject = {
          code,
          description,
          isEnabled: true,
-         sections: {},
+         sections: new Map(),
       };
-      subjects[code] = subject;
+      subjects.set(code, subject);
 
       return subject;
    }
 
-   function getSubject(code: string): Subject | undefined {
-      return subjects[code];
+   function getSubject(code: string) {
+      return subjects.get(code);
    }
 
    function removeSubject(code: string) {
-      delete subjects[code];
+      subjects.delete(code);
    }
 
    function clearSubjects() {
-      for (let key in subjects) {
-         delete subjects[key];
-      }
-      // individualIT = {};
+      subjects.clear();
    }
 
    function addSection(
@@ -45,29 +40,21 @@ export const useStore = defineStore("store", () => {
          timeslots: [],
       };
 
-      getSubject(subjectCode)!.sections[code] = section;
+      getSubject(subjectCode)!.sections.set(code, section);
 
       return section;
    }
 
-   function getSection(subjectCode: string, code: string): Section | undefined {
-      return getSubject(subjectCode)?.sections[code];
+   function getSection(subjectCode: string, code: string) {
+      return getSubject(subjectCode)?.sections.get(code);
    }
 
    function removeSection(subjectCode: string, code: string) {
-      delete getSubject(subjectCode)!.sections[code];
+      getSubject(subjectCode)!.sections.delete(code);
    }
 
    function clearSections(subjectCode: string) {
-      let map = getSubject(subjectCode)!.sections;
-      for (let key in map) {
-         delete map[key];
-      }
-      // individualIT[subjectCode] = {};
-   }
-
-   function getSubjectSections(subjectCode: string) {
-      return getSubject(subjectCode)?.sections;
+      getSubject(subjectCode)!.sections.clear();
    }
 
    return {
@@ -80,6 +67,5 @@ export const useStore = defineStore("store", () => {
       getSection,
       removeSection,
       clearSections,
-      getSubjectSections,
    };
 });

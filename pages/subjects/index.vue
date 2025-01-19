@@ -7,11 +7,11 @@
          <template #default>
             <NEmpty
                class="h-full w-full flex items-center justify-center"
-               v-if="subjectsCount <= 0"
+               v-if="store.subjects.size <= 0"
             ></NEmpty>
             <div v-else class="flex flex-row flex-wrap">
                <div
-                  v-for="subject in store.subjects"
+                  v-for="subject in store.subjects.values()"
                   class="w-1/3 max-md:w-full max-xl:w-1/2 p-2"
                >
                   <Subject :code="subject.code"> </Subject>
@@ -68,16 +68,6 @@ const addSubjectCode = ref("");
 const addSubjectDescription = ref("");
 const store = useStore();
 console.log(store);
-
-watch(store.subjects, (x) => {
-   console.log(x);
-})
-
-const subjectsCount = computed(() => {
-   let counter = 0;
-   for (let x in store.subjects) counter++;
-   return counter;
-});
 
 function addSubject() {
    let code = addSubjectCode.value.trim();
