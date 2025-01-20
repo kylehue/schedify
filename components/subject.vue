@@ -45,11 +45,13 @@ const props = defineProps<{
 }>();
 const dialog = useDialog();
 const store = useStore();
+const route = useRoute();
 const subject = store.getSubject(props.code)!; // should be guaranteed
 
 function navigateToSections() {
    navigateTo({
       params: { subject: props.code },
+      query: { s: route.query.s },
       name: "subjects-subject-sections",
    });
 }

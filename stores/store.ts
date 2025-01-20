@@ -338,10 +338,94 @@ export const useStore = defineStore("store", () => {
       return !isSectionsEmpty(subjectCode) && isSectionsValid(subjectCode);
    }
 
-   // Add dummy data
-   addSubject("CS 004", "Networks and communication");
-   addSection("CS 004", "CS31S1");
-   addSection("CS 004", "CS31S2");
+   function toJSON() {
+      return JSON.stringify(
+         Array.from(subjects.entries()).map(([code, subject]) => ({
+            c: code,
+            d: subject.description,
+            e: subject.isEnabled,
+            s: Array.from(subject.sections.entries()).map(
+               ([secCode, section]) => ({
+                  c: secCode,
+                  d: section.description,
+                  e: section.isEnabled,
+                  t: Array.from(section.timeslots.entries()).map(
+                     ([id, timeslot]) => ({
+                        i: id,
+                        f: timeslot.from,
+                        t: timeslot.to,
+                        e: timeslot.isEnabled,
+                        d: timeslot.day,
+                     })
+                  ),
+               })
+            ),
+         }))
+      );
+   }
+
+   function fromJSON(json: string) {
+      const data = JSON.parse(json);
+      subjects.clear();
+      data.forEach((subject: any) => {
+         const newSubject = addSubject(subject.c, subject.d);
+         newSubject.isEnabled = subject.e;
+         subject.s.forEach((section: any) => {
+            const newSection = addSection(subject.c, section.c, section.d);
+            newSection.isEnabled = section.e;
+            section.t.forEach((timeslot: any) => {
+               const newTimeslot = addTimeslot(
+                  subject.c,
+                  section.c,
+                  timeslot.i,
+                  timeslot.f,
+                  timeslot.t,
+                  timeslot.d
+               );
+               newTimeslot.isEnabled = timeslot.e;
+            });
+         });
+      });
+   }
+
+   // Load local storage
+   const router = useRouter();
+   const route = useRoute();
+   if (localStorage["s"]) {
+      try {
+         let base64 = atob(localStorage["s"]);
+         JSON.parse(base64); // test if this is gonna cause error
+         fromJSON(base64);
+      } catch (e) {
+         console.warn("Corrupted state!");
+      }
+   }
+
+   // Auto save through url
+   watch(
+      subjects,
+      () => {
+         let json = toJSON();
+         let base64 = btoa(json);
+         router.replace({ query: { ...route.query, s: base64 } });
+         localStorage["s"] = base64; // update local storage
+      },
+      { deep: true, immediate: true }
+   );
+
+   watch(
+      route,
+      (newRoute, oldRoute) => {
+         let newState = newRoute.query.s;
+         let oldState = oldRoute?.query.s;
+         if (oldState !== newState) {
+            let base64 = newState as string;
+            let json = atob(base64) || "[]";
+            fromJSON(json);
+         }
+      },
+      { immediate: true }
+   );
 
    return {
       subjects,

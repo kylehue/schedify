@@ -10,7 +10,7 @@
                :breadcrumbs="[
                   {
                      label: 'Subjects',
-                     click: () => navigateTo({ name: 'subjects' }),
+                     click: navigateToSubjects,
                   },
                   {
                      label: $route.params.subject as string,
@@ -157,7 +157,15 @@ function addTimeslot() {
 function goBack() {
    navigateTo({
       name: "subjects-subject-sections",
+      query: { s: route.query.s },
       params: { subject: route.params.subject },
+   });
+}
+
+function navigateToSubjects() {
+   navigateTo({
+      name: "subjects",
+      query: { s: route.query.s },
    });
 }
 

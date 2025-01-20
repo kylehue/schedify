@@ -55,6 +55,7 @@ const section = store.getSection(subject.code, props.code)!;
 function navigateToTimeSlots() {
    navigateTo({
       params: { section: props.code },
+      query: { s: route.query.s },
       name: "subjects-subject-sections-section-timeslots",
    });
 }

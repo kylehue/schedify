@@ -10,7 +10,7 @@
                :breadcrumbs="[
                   {
                      label: 'Subjects',
-                     click: () => navigateTo({ name: 'subjects' }),
+                     click: () => goBack(),
                   },
                   {
                      label: $route.params.subject as string,
@@ -119,7 +119,7 @@ function addSection() {
 }
 
 function goBack() {
-   navigateTo({ name: "subjects" });
+   navigateTo({ name: "subjects", query: { s: route.query.s } });
 }
 
 function clearAll() {
