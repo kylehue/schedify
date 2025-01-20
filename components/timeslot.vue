@@ -66,6 +66,10 @@ const subject = store.getSubject(route.params.subject as string)!;
 const section = store.getSection(subject.code, route.params.section as string)!;
 const timeslot = store.getTimeslot(subject.code, section.code, props.id)!;
 
+const emit = defineEmits<{
+   changeDay: [keyof typeof daysMap];
+}>();
+
 function remove() {
    dialog.warning({
       title: "Remove time slot",
@@ -80,5 +84,6 @@ function remove() {
 
 function changeDay(newDay: keyof typeof daysMap) {
    timeslot.day = newDay;
+   emit("changeDay", newDay);
 }
 </script>

@@ -53,6 +53,9 @@
                               :id="timeslot.id"
                               v-model:time-from="timeslot.from"
                               v-model:time-to="timeslot.to"
+                              @change-day="
+                                 (newDay) => (changeTimeslotDay = newDay)
+                              "
                            ></Timeslot>
                         </div>
                      </div>
@@ -119,11 +122,23 @@ const isAddTimeslotDialogShown = ref(false);
 const addTimeslotFrom = ref("12:00 AM");
 const addTimeslotTo = ref("12:00 AM");
 const addTimeslotDay = ref(currentTab.value);
+const changeTimeslotDay = ref<keyof typeof daysMap>(days[0].key);
 const store = useStore();
 const subject = store.getSubject(route.params.subject as string)!;
 const section = store.getSection(subject.code, route.params.section as string)!;
 const timeslotsGroupedByDay = computed(() =>
    store.getTimeslotsGroupedByDay(subject.code, section.code)
+);
+
+// When a time slot's day changes, sync it with the current tab
+// This can be done by simply doing `currentTab = newDay`
+// but the ui gets buggy without the "post" thing from vue
+watch(
+   changeTimeslotDay,
+   (x) => {
+      currentTab.value = x;
+   },
+   { flush: "post" }
 );
 
 // Sync the day to modal dialog prompt
