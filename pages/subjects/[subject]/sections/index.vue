@@ -34,7 +34,7 @@
             </div>
          </template>
          <template #action>
-            <div class="flex w-full justify-between gap-2">
+            <div class="flex flex-wrap w-full justify-between gap-2">
                <NButton @click="isAddSectionDialogShown = true">
                   <template #icon><PhPlus></PhPlus></template>
                   Add a section

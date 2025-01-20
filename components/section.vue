@@ -16,8 +16,8 @@
          </div>
       </template>
       <template #action>
-         <div class="flex justify-between">
-            <div class="flex gap-2">
+         <div class="flex flex-wrap justify-between">
+            <div class="flex flex-wrap gap-2">
                <NBadge
                   dot
                   :show="!store.isTimeslotsValid(subject.code, section.code)"

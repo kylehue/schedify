@@ -20,8 +20,8 @@
             </div>
          </template>
          <template #action>
-            <div class="flex w-full justify-between gap-2">
-               <div class="flex gap-2">
+            <div class="flex flex-wrap w-full justify-between gap-2">
+               <div class="flex flex-wrap gap-2">
                   <NButton @click="isAddSubjectDialogShown = true">
                      <template #icon><PhPlus></PhPlus></template>
                      Add a subject

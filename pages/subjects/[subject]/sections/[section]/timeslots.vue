@@ -53,12 +53,12 @@
             </NTabs>
          </template>
          <template #action>
-            <div class="flex w-full justify-between gap-2">
+            <div class="flex flex-wrap w-full justify-between gap-2">
                <NButton @click="isAddTimeslotDialogShown = true">
                   <template #icon><PhPlus></PhPlus></template>
                   Add a time slot
                </NButton>
-               <div class="flex gap-2">
+               <div class="flex flex-wrap gap-2">
                   <NButton @click="clearAll" ghost type="error">
                      <template #icon><PhTrash></PhTrash></template>
                      Clear all
