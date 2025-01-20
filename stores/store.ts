@@ -338,8 +338,8 @@ export const useStore = defineStore("store", () => {
       return !isSectionsEmpty(subjectCode) && isSectionsValid(subjectCode);
    }
 
-   function toJSON() {
-      return JSON.stringify(
+   function toUrlSafeString() {
+      return jsonToUrlSafeString(
          Array.from(subjects.entries()).map(([code, subject]) => ({
             c: code,
             d: subject.description,
@@ -364,8 +364,8 @@ export const useStore = defineStore("store", () => {
       );
    }
 
-   function fromJSON(json: string) {
-      const data = JSON.parse(json);
+   function fromUrlSafeString(str: string) {
+      const data = urlSafeStringToJson(str);
       subjects.clear();
       data.forEach((subject: any) => {
          const newSubject = addSubject(subject.c, subject.d);
@@ -393,9 +393,7 @@ export const useStore = defineStore("store", () => {
    const route = useRoute();
    if (localStorage["s"]) {
       try {
-         let base64 = atob(localStorage["s"]);
-         JSON.parse(base64); // test if this is gonna cause error
-         fromJSON(base64);
+         fromUrlSafeString(localStorage["s"]);
       } catch (e) {
          console.warn("Corrupted state!");
       }
@@ -405,10 +403,9 @@ export const useStore = defineStore("store", () => {
    watch(
       subjects,
       () => {
-         let json = toJSON();
-         let base64 = btoa(json);
-         router.replace({ query: { ...route.query, s: base64 } });
-         localStorage["s"] = base64; // update local storage
+         const str = toUrlSafeString();
+         router.replace({ query: { ...route.query, s: str } });
+         localStorage["s"] = str; // update local storage
       },
       { deep: true, immediate: true }
    );
@@ -419,9 +416,7 @@ export const useStore = defineStore("store", () => {
          let newState = newRoute.query.s;
          let oldState = oldRoute?.query.s;
          if (oldState !== newState) {
-            let base64 = newState as string;
-            let json = atob(base64) || "[]";
-            fromJSON(json);
+            fromUrlSafeString(newState as string);
          }
       },
       { immediate: true }
