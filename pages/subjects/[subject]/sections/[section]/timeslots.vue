@@ -23,7 +23,12 @@
             ></Navigator>
          </template>
          <template #default>
+            <NEmpty
+               class="h-full w-full flex items-center justify-center"
+               v-if="store.isTimeslotsEmpty(subject.code, section.code)"
+            ></NEmpty>
             <NTabs
+               v-else
                type="line"
                animated
                v-model:value="currentTab"
@@ -31,25 +36,28 @@
                pane-class="h-full w-full"
                pane-wrapper-class="h-full w-full"
             >
-               <NTabPane v-for="day in days" :name="day.key" :tab="day.label">
-                  <NEmpty
-                     class="h-full w-full flex items-center justify-center"
-                     v-if="timeslotsGroupedByDay[day.key].length <= 0"
-                  ></NEmpty>
-                  <div v-else class="flex flex-row flex-wrap">
-                     <div
-                        v-for="timeslot in timeslotsGroupedByDay[day.key]"
-                        :key="timeslot.id"
-                        class="w-1/3 max-md:w-full max-xl:w-1/2 p-2"
-                     >
-                        <Timeslot
-                           :id="timeslot.id"
-                           v-model:time-from="timeslot.from"
-                           v-model:time-to="timeslot.to"
-                        ></Timeslot>
+               <template v-for="day in days">
+                  <NTabPane
+                     v-if="timeslotsGroupedByDay[day.key].length > 0"
+                     :name="day.key"
+                     :tab="day.label"
+                     :key="day.key"
+                  >
+                     <div class="flex flex-row flex-wrap">
+                        <div
+                           v-for="timeslot in timeslotsGroupedByDay[day.key]"
+                           :key="timeslot.id"
+                           class="w-1/3 max-md:w-full max-xl:w-1/2 p-2"
+                        >
+                           <Timeslot
+                              :id="timeslot.id"
+                              v-model:time-from="timeslot.from"
+                              v-model:time-to="timeslot.to"
+                           ></Timeslot>
+                        </div>
                      </div>
-                  </div>
-               </NTabPane>
+                  </NTabPane>
+               </template>
             </NTabs>
          </template>
          <template #action>
@@ -100,15 +108,13 @@ import {
    NTabs,
    NTabPane,
    NSelect,
-   NBadge,
    useDialog,
 } from "naive-ui";
-import { PhPlus, PhTrash, PhClock } from "@phosphor-icons/vue";
-import type { Timeslot } from "~/types/types";
+import { PhPlus, PhTrash } from "@phosphor-icons/vue";
 
 const route = useRoute();
 const dialog = useDialog();
-const currentTab = ref(days[0].key);
+const currentTab = ref<keyof typeof daysMap>(days[0].key);
 const isAddTimeslotDialogShown = ref(false);
 const addTimeslotFrom = ref("12:00 AM");
 const addTimeslotTo = ref("12:00 AM");
@@ -121,7 +127,26 @@ const timeslotsGroupedByDay = computed(() =>
 );
 
 // Sync the day to modal dialog prompt
-watch(currentTab, (x) => (addTimeslotDay.value = x));
+watch(currentTab, (x) => {
+   addTimeslotDay.value = x;
+});
+
+// Choose any non-empty tab if the current tab is empty
+watch(
+   timeslotsGroupedByDay,
+   () => {
+      if (timeslotsGroupedByDay.value[currentTab.value].length <= 0) {
+         for (let { key } of days) {
+            let timeslots = timeslotsGroupedByDay.value[key];
+            if (timeslots.length > 0) {
+               currentTab.value = timeslots[0].day;
+               break;
+            }
+         }
+      }
+   },
+   { immediate: true, flush: "post" }
+);
 
 function addTimeslot() {
    let from = addTimeslotFrom.value;
