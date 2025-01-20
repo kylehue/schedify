@@ -2,7 +2,7 @@
    <div
       class="w-full h-full flex flex-col items-start justify-start gap-10 p-10 overflow-y-scroll"
    >
-      <NCard class="min-h-[500px]">
+      <NCard content-class="min-h-[300px]">
          <template #header>
             <Navigator
                title="Sections"
@@ -56,6 +56,7 @@
          <div class="flex flex-col gap-2">
             <NInput
                v-model:value="addSectionCode"
+               :status="addSectionCodeStatus"
                placeholder="Code (must be unique)"
             ></NInput>
             <NInput
@@ -68,26 +69,35 @@
 </template>
 
 <script setup lang="ts">
-import { NCard, NButton, NEmpty, NInput, useDialog } from "naive-ui";
+import {
+   NCard,
+   NButton,
+   NEmpty,
+   NInput,
+   useDialog,
+   type InputProps,
+} from "naive-ui";
 import { PhPlus, PhTrash } from "@phosphor-icons/vue";
 
 const dialog = useDialog();
 const route = useRoute();
 const isAddSectionDialogShown = ref(false);
 const addSectionCode = ref("");
+const addSectionCodeStatus = ref<InputProps["status"]>(undefined);
 const addSectionDescription = ref("");
 const store = useStore();
 const subject = store.getSubject(route.params.subject as string)!;
 
 function addSection() {
    let code = addSectionCode.value.trim();
-   let description = addSectionDescription.value;
+   let description = addSectionDescription.value.trim() || undefined;
 
    const add = () => {
       store.addSection(subject.code, code, description);
       addSectionCode.value = "";
       addSectionDescription.value = "";
       isAddSectionDialogShown.value = false;
+      addSectionCodeStatus.value = undefined;
    };
 
    if (store.getSection(subject.code, code)) {
@@ -101,6 +111,8 @@ function addSection() {
             add();
          },
       });
+   } else if (!code.length) {
+      addSectionCodeStatus.value = "error";
    } else {
       add();
    }

@@ -4,7 +4,10 @@ body,
    overflow: hidden;
    width: 100vw;
    height: 100vh;
-   font-family: "Inter", "Roboto", sans-serif;
    font-size: 16px;
    color-scheme: dark;
+}
+
+* {
+   font-family: "Inter", "Roboto", sans-serif;
 }

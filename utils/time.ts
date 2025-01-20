@@ -46,7 +46,7 @@ export const defaultTimeFormat = "hh:mm aa"; // changing this will break the app
  * @param time - The time string in "hh:mm aa" format.
  * @returns The decimal representation of the time.
  */
-function timeToDecimal(time: string) {
+export function timeToDecimal(time: string) {
    const [timePart, meridian] = time.split(" ");
    let [hours, minutes] = timePart.split(":").map(Number);
 
@@ -61,7 +61,7 @@ function timeToDecimal(time: string) {
  * @param decimal - The decimal representation of the time.
  * @returns The time in "hh:mm aa" format.
  */
-function decimalToTime(decimal: number) {
+export function decimalToTime(decimal: number) {
    const hours24 = Math.floor(decimal);
    const minutes = Math.round((decimal - hours24) * 60);
    const meridian = hours24 >= 12 ? "PM" : "AM";
@@ -72,4 +72,18 @@ function decimalToTime(decimal: number) {
    return `${hours12.toString().padStart(2, "0")}:${minutes
       .toString()
       .padStart(2, "0")} ${meridian}`;
+}
+
+/**
+ * Adjusts the time range to ensure it circles correctly when `from` > `to`.
+ * @param from - The starting time in 0-23 format.
+ * @param to - The ending time in 0-23 format.
+ * @returns A tuple representing the adjusted time range.
+ */
+export function circleTimeRange(from: number, to: number): [number, number] {
+   if (from > to) {
+      to += 24;
+   }
+
+   return [from, to];
 }

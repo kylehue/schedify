@@ -2,7 +2,7 @@
    <div
       class="w-full h-full flex flex-col items-start justify-start gap-10 p-10 overflow-y-scroll"
    >
-      <NCard class="min-h-[500px]">
+      <NCard content-class="min-h-[300px]">
          <template #header>
             <Navigator
                title="Time slots"
@@ -34,15 +34,25 @@
                <NTabPane v-for="day in days" :name="day.key" :tab="day.label">
                   <NEmpty
                      class="h-full w-full flex items-center justify-center"
-                     v-if="timeslotsDayMapped[day.key].length <= 0"
+                     v-if="timeslotsGroupedByDay[day.key].length <= 0"
                   ></NEmpty>
                   <div v-else class="flex flex-row flex-wrap">
                      <div
-                        v-for="timeslot in timeslotsDayMapped[day.key]"
+                        v-for="timeslot in timeslotsGroupedByDay[day.key]"
                         :key="timeslot.id"
                         class="w-1/3 max-md:w-full max-xl:w-1/2 p-2"
                      >
-                        <NBadge class="w-full" dot :show="true">
+                        <NBadge
+                           class="w-full"
+                           dot
+                           :show="
+                              store.isTimeslotConflicted(
+                                 subject.code,
+                                 section.code,
+                                 timeslot.id
+                              )
+                           "
+                        >
                            <Timeslot
                               :id="timeslot.id"
                               v-model:time-from="timeslot.from"
@@ -118,23 +128,9 @@ const addTimeslotDay = ref(currentTab.value);
 const store = useStore();
 const subject = store.getSubject(route.params.subject as string)!;
 const section = store.getSection(subject.code, route.params.section as string)!;
-const timeslotsDayMapped = computed(() => {
-   let map: Record<keyof typeof daysMap, Timeslot[]> = {
-      mon: [],
-      tue: [],
-      wed: [],
-      fri: [],
-      sat: [],
-      sun: [],
-      thu: [],
-   };
-
-   for (let timeslot of section.timeslots.values()) {
-      map[timeslot.day].push(timeslot);
-   }
-
-   return map;
-});
+const timeslotsGroupedByDay = computed(() =>
+   store.getTimeslotsGroupedByDay(subject.code, section.code)
+);
 
 // Sync the day to modal dialog prompt
 watch(currentTab, (x) => (addTimeslotDay.value = x));

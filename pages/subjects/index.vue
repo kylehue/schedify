@@ -2,7 +2,7 @@
    <div
       class="w-full h-full flex flex-col items-start justify-start gap-10 p-10 overflow-y-scroll"
    >
-      <NCard class="min-h-[500px]">
+      <NCard content-class="min-h-[300px]">
          <template #header> Subjects </template>
          <template #default>
             <NEmpty
@@ -48,6 +48,7 @@
          <div class="flex flex-col gap-2">
             <NInput
                v-model:value="addSubjectCode"
+               :status="addSubjectCodeStatus"
                placeholder="Code (must be unique)"
             ></NInput>
             <NInput
@@ -60,25 +61,34 @@
 </template>
 
 <script setup lang="ts">
-import { NCard, NButton, useDialog, NInput, NEmpty } from "naive-ui";
+import {
+   NCard,
+   NButton,
+   useDialog,
+   NInput,
+   NEmpty,
+   type InputProps,
+} from "naive-ui";
 import { PhPlus, PhTrash, PhSparkle } from "@phosphor-icons/vue";
 
 const dialog = useDialog();
 const isAddSubjectDialogShown = ref(false);
 const addSubjectCode = ref("");
+const addSubjectCodeStatus = ref<InputProps["status"]>(undefined);
 const addSubjectDescription = ref("");
 const store = useStore();
 console.log(store);
 
 function addSubject() {
    let code = addSubjectCode.value.trim();
-   let description = addSubjectDescription.value;
+   let description = addSubjectDescription.value.trim() || undefined;
 
    const add = () => {
       store.addSubject(code, description);
       addSubjectCode.value = "";
       addSubjectDescription.value = "";
       isAddSubjectDialogShown.value = false;
+      addSubjectCodeStatus.value = undefined;
    };
 
    if (store.getSubject(code)) {
@@ -92,6 +102,8 @@ function addSubject() {
             add();
          },
       });
+   } else if (!code.length) {
+      addSubjectCodeStatus.value = "error";
    } else {
       add();
    }

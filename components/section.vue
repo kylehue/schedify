@@ -18,7 +18,10 @@
       <template #action>
          <div class="flex justify-between">
             <div class="flex gap-2">
-               <NBadge dot>
+               <NBadge
+                  dot
+                  :show="!store.isTimeslotsValid(subject.code, section.code)"
+               >
                   <NButton tertiary @click="navigateToTimeSlots">
                      Edit time slots
                   </NButton>
