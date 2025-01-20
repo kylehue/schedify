@@ -123,7 +123,8 @@ export const useStore = defineStore("store", () => {
          day,
       };
 
-      getSection(subjectCode, sectionCode)!.timeslots.set(id, timeslot);
+      let section = getSection(subjectCode, sectionCode)!;
+      section.timeslots.set(id, timeslot);
 
       return timeslot;
    }
@@ -140,7 +141,9 @@ export const useStore = defineStore("store", () => {
       sectionCode: string,
       id: string | number
    ) {
-      return getSection(subjectCode, sectionCode)!.timeslots.get(id);
+      let section = getSection(subjectCode, sectionCode);
+      if (!section) return;
+      return section.timeslots.get(id);
    }
 
    /**
@@ -155,7 +158,9 @@ export const useStore = defineStore("store", () => {
       sectionCode: string,
       id: string | number
    ) {
-      getSection(subjectCode, sectionCode)!.timeslots.delete(id);
+      let section = getSection(subjectCode, sectionCode);
+      if (!section) return;
+      section.timeslots.delete(id);
    }
 
    /**
@@ -165,7 +170,9 @@ export const useStore = defineStore("store", () => {
     * @param sectionCode The code of the section.
     */
    function clearTimeslot(subjectCode: string, sectionCode: string) {
-      getSection(subjectCode, sectionCode)!.timeslots.clear();
+      let section = getSection(subjectCode, sectionCode);
+      if (!section) return;
+      section.timeslots.clear();
    }
 
    /**
@@ -180,7 +187,9 @@ export const useStore = defineStore("store", () => {
       sectionCode: string,
       day: keyof typeof daysMap
    ) {
-      let timeslots = getSection(subjectCode, sectionCode)!.timeslots;
+      let section = getSection(subjectCode, sectionCode);
+      if (!section) return;
+      let timeslots = section.timeslots;
       for (let [id, timeslot] of timeslots) {
          if (timeslot.day !== day) continue;
          timeslots.delete(id);
@@ -204,7 +213,9 @@ export const useStore = defineStore("store", () => {
          thu: [],
       };
 
-      let timeslots = getSection(subjectCode, sectionCode)!.timeslots;
+      let section = getSection(subjectCode, sectionCode);
+      if (!section) return map;
+      let timeslots = section.timeslots;
       for (let timeslot of timeslots.values()) {
          map[timeslot.day].push(timeslot);
       }
@@ -219,7 +230,9 @@ export const useStore = defineStore("store", () => {
     * @param sectionCode The code of the section to check.
     */
    function isTimeslotsEmpty(subjectCode: string, sectionCode: string) {
-      let timeslots = getSection(subjectCode, sectionCode)!.timeslots;
+      let section = getSection(subjectCode, sectionCode);
+      if (!section) return true;
+      let timeslots = section.timeslots;
       return timeslots.size <= 0;
    }
 
@@ -241,7 +254,9 @@ export const useStore = defineStore("store", () => {
          sectionCode
       );
 
-      let target = getTimeslot(subjectCode, sectionCode, id)!;
+      let target = getTimeslot(subjectCode, sectionCode, id);
+      if (!target) return false;
+
       let targetFrom = timeToDecimal(target.from);
       let targetTo = timeToDecimal(target.to);
 
@@ -275,7 +290,9 @@ export const useStore = defineStore("store", () => {
     * @param sectionCode The code of the section to check.
     */
    function isTimeslotsConflicted(subjectCode: string, sectionCode: string) {
-      let timeslots = getSection(subjectCode, sectionCode)!.timeslots;
+      let section = getSection(subjectCode, sectionCode);
+      if (!section) return false;
+      let timeslots = section.timeslots;
       for (let [id] of timeslots) {
          if (isTimeslotConflicted(subjectCode, sectionCode, id)) return true;
       }
@@ -302,7 +319,9 @@ export const useStore = defineStore("store", () => {
     * @param subjectCode The code of the subject to check.
     */
    function isSectionsEmpty(subjectCode: string) {
-      return getSubject(subjectCode)!.sections.size <= 0;
+      let subject = getSubject(subjectCode);
+      if (!subject) return true;
+      return subject.sections.size <= 0;
    }
 
    /**
@@ -321,7 +340,8 @@ export const useStore = defineStore("store", () => {
     * @param subjectCode The code of the subject to check.
     */
    function isSectionsValid(subjectCode: string) {
-      let subject = getSubject(subjectCode)!;
+      let subject = getSubject(subjectCode);
+      if (!subject) return true;
       for (let [id, section] of subject.sections) {
          if (!isSectionValid(subject.code, section.code)) return false;
       }
