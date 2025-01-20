@@ -18,7 +18,7 @@
       <template #action>
          <div class="flex justify-between">
             <div class="flex gap-2">
-               <NBadge dot>
+               <NBadge dot :show="!store.isSubjectValid(subject.code)">
                   <NButton tertiary @click="navigateToSections">
                      Edit sections
                   </NButton>

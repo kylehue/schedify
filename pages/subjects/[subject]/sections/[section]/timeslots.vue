@@ -42,23 +42,11 @@
                         :key="timeslot.id"
                         class="w-1/3 max-md:w-full max-xl:w-1/2 p-2"
                      >
-                        <NBadge
-                           class="w-full"
-                           dot
-                           :show="
-                              store.isTimeslotConflicted(
-                                 subject.code,
-                                 section.code,
-                                 timeslot.id
-                              )
-                           "
-                        >
-                           <Timeslot
-                              :id="timeslot.id"
-                              v-model:time-from="timeslot.from"
-                              v-model:time-to="timeslot.to"
-                           ></Timeslot>
-                        </NBadge>
+                        <Timeslot
+                           :id="timeslot.id"
+                           v-model:time-from="timeslot.from"
+                           v-model:time-to="timeslot.to"
+                        ></Timeslot>
                      </div>
                   </div>
                </NTabPane>

@@ -296,6 +296,48 @@ export const useStore = defineStore("store", () => {
       );
    }
 
+   /**
+    * Checks if a subject has no sections.
+    *
+    * @param subjectCode The code of the subject to check.
+    */
+   function isSectionsEmpty(subjectCode: string) {
+      return getSubject(subjectCode)!.sections.size <= 0;
+   }
+
+   /**
+    * Checks if a section has valid contents.
+    *
+    * @param subjectCode The subject code of the section to check.
+    * @param sectionCode The code of the section to check.
+    */
+   function isSectionValid(subjectCode: string, sectionCode: string) {
+      return isTimeslotsValid(subjectCode, sectionCode);
+   }
+
+   /**
+    * Checks if sections in a subject has valid contents.
+    *
+    * @param subjectCode The code of the subject to check.
+    */
+   function isSectionsValid(subjectCode: string) {
+      let subject = getSubject(subjectCode)!;
+      for (let [id, section] of subject.sections) {
+         if (!isSectionValid(subject.code, section.code)) return false;
+      }
+
+      return true;
+   }
+
+   /**
+    * Checks if a subject has valid contents.
+    *
+    * @param subjectCode The code of the subject to check.
+    */
+   function isSubjectValid(subjectCode: string) {
+      return !isSectionsEmpty(subjectCode) && isSectionsValid(subjectCode);
+   }
+
    // Add dummy data
    addSubject("CS 004", "Networks and communication");
    addSection("CS 004", "CS31S1");
@@ -321,5 +363,8 @@ export const useStore = defineStore("store", () => {
       isTimeslotConflicted,
       isTimeslotsConflicted,
       isTimeslotsValid,
+      isSectionsEmpty,
+      isSectionsValid,
+      isSubjectValid,
    };
 });

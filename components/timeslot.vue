@@ -1,34 +1,42 @@
 <template>
-   <NCard
-      :class="{
-         'opacity-50': !timeslot.isEnabled,
-      }"
-      class="transition-opacity"
+   <NBadge
+      class="w-full"
+      dot
+      :show="
+         store.isTimeslotConflicted(subject.code, section.code, timeslot.id)
+      "
    >
-      <template #default>
-         <div class="flex flex-row items-center gap-2">
-            <TimeRange v-model:from="timeFrom" v-model:to="timeTo" />
-         </div>
-      </template>
-      <template #action>
-         <div class="flex gap-2 justify-between">
-            <NButton
-               @click="timeslot.isEnabled = !timeslot.isEnabled"
-               tertiary
-               >{{ timeslot.isEnabled ? "Disable" : "Enable" }}</NButton
-            >
-            <NButton @click="remove" type="error" tertiary circle>
-               <template #icon>
-                  <PhTrash></PhTrash>
-               </template>
-            </NButton>
-         </div>
-      </template>
-   </NCard>
+      <NCard
+         :class="{
+            'opacity-50': !timeslot.isEnabled,
+         }"
+         class="transition-opacity"
+      >
+         <template #default>
+            <div class="flex flex-row items-center gap-2">
+               <TimeRange v-model:from="timeFrom" v-model:to="timeTo" />
+            </div>
+         </template>
+         <template #action>
+            <div class="flex gap-2 justify-between">
+               <NButton
+                  @click="timeslot.isEnabled = !timeslot.isEnabled"
+                  tertiary
+                  >{{ timeslot.isEnabled ? "Disable" : "Enable" }}</NButton
+               >
+               <NButton @click="remove" type="error" tertiary circle>
+                  <template #icon>
+                     <PhTrash></PhTrash>
+                  </template>
+               </NButton>
+            </div>
+         </template>
+      </NCard>
+   </NBadge>
 </template>
 
 <script setup lang="ts">
-import { NCard, NButton, NText, NTimePicker, useDialog } from "naive-ui";
+import { NCard, NButton, NBadge, NTimePicker, useDialog } from "naive-ui";
 import { PhTrash } from "@phosphor-icons/vue";
 
 const props = defineProps<{
