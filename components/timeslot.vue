@@ -19,11 +19,26 @@
          </template>
          <template #action>
             <div class="flex gap-2 justify-between">
-               <NButton
-                  @click="timeslot.isEnabled = !timeslot.isEnabled"
-                  tertiary
-                  >{{ timeslot.isEnabled ? "Disable" : "Enable" }}</NButton
-               >
+               <div class="flex gap-2">
+                  <NDropdown
+                     trigger="click"
+                     :options="
+                        days.map((v) => ({
+                           ...v,
+                           show: v.key !== timeslot.day,
+                        }))
+                     "
+                     @select="(v) => changeDay(v)"
+                  >
+                     <NButton tertiary> Change day </NButton>
+                  </NDropdown>
+                  <NButton
+                     @click="timeslot.isEnabled = !timeslot.isEnabled"
+                     tertiary
+                  >
+                     {{ timeslot.isEnabled ? "Disable" : "Enable" }}
+                  </NButton>
+               </div>
                <NButton @click="remove" type="error" tertiary circle>
                   <template #icon>
                      <PhTrash></PhTrash>
@@ -36,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import { NCard, NButton, NBadge, NTimePicker, useDialog } from "naive-ui";
+import { NCard, NButton, NBadge, NDropdown, useDialog } from "naive-ui";
 import { PhTrash } from "@phosphor-icons/vue";
 
 const props = defineProps<{
@@ -61,5 +76,9 @@ function remove() {
          store.removeTimeslot(subject.code, section.code, timeslot.id);
       },
    });
+}
+
+function changeDay(newDay: keyof typeof daysMap) {
+   timeslot.day = newDay;
 }
 </script>
