@@ -46,7 +46,13 @@ const props = defineProps<{
 const dialog = useDialog();
 const store = useStore();
 const route = useRoute();
-const subject = store.getSubject(props.code)!; // should be guaranteed
+const subject = store.getSubject(props.code);
+if (!subject) {
+   throw createError({
+      statusCode: 404,
+      statusMessage: `Subject does not exist: ${props.code}`,
+   });
+}
 
 function navigateToSections() {
    navigateTo({

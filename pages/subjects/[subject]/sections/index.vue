@@ -86,21 +86,29 @@ const addSectionCode = ref("");
 const addSectionCodeStatus = ref<InputProps["status"]>(undefined);
 const addSectionDescription = ref("");
 const store = useStore();
-const subject = store.getSubject(route.params.subject as string)!;
+const subject = store.getSubject(route.params.subject as string);
+if (!subject) {
+   throw createError({
+      statusCode: 404,
+      statusMessage: `Subject does not exist: ${
+         route.params.subject as string
+      }`,
+   });
+}
 
 function addSection() {
    let code = addSectionCode.value.trim();
    let description = addSectionDescription.value.trim() || undefined;
 
    const add = () => {
-      store.addSection(subject.code, code, description);
+      store.addSection(subject!.code, code, description);
       addSectionCode.value = "";
       addSectionDescription.value = "";
       isAddSectionDialogShown.value = false;
       addSectionCodeStatus.value = undefined;
    };
 
-   if (store.getSection(subject.code, code)) {
+   if (store.getSection(subject!.code, code)) {
       dialog.warning({
          title: "Duplicate section",
          content:
@@ -129,7 +137,7 @@ function clearAll() {
       positiveText: "Clear all",
       negativeText: "Cancel",
       onPositiveClick(e) {
-         store.clearSections(subject.code);
+         store.clearSections(subject!.code);
       },
    });
 }

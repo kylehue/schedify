@@ -62,9 +62,33 @@ const route = useRoute();
 const timeFrom = defineModel("timeFrom", { default: "12:00 AM" });
 const timeTo = defineModel("timeTo", { default: "12:00 AM" });
 const store = useStore();
-const subject = store.getSubject(route.params.subject as string)!;
-const section = store.getSection(subject.code, route.params.section as string)!;
-const timeslot = store.getTimeslot(subject.code, section.code, props.id)!;
+const subject = store.getSubject(route.params.subject as string);
+if (!subject) {
+   throw createError({
+      statusCode: 404,
+      statusMessage: `Subject does not exist: ${
+         route.params.subject as string
+      }`,
+   });
+}
+
+const section = store.getSection(subject.code, route.params.section as string);
+if (!section) {
+   throw createError({
+      statusCode: 404,
+      statusMessage: `Section does not exist: ${
+         route.params.section as string
+      }`,
+   });
+}
+
+const timeslot = store.getTimeslot(subject.code, section.code, props.id);
+if (!timeslot) {
+   throw createError({
+      statusCode: 404,
+      statusMessage: `Time slot does not exist.`,
+   });
+}
 
 const emit = defineEmits<{
    changeDay: [keyof typeof daysMap];
@@ -77,13 +101,13 @@ function remove() {
       positiveText: "Remove",
       negativeText: "Cancel",
       onPositiveClick(e) {
-         store.removeTimeslot(subject.code, section.code, timeslot.id);
+         store.removeTimeslot(subject!.code, section!.code, timeslot!.id);
       },
    });
 }
 
 function changeDay(newDay: keyof typeof daysMap) {
-   timeslot.day = newDay;
+   timeslot!.day = newDay;
    emit("changeDay", newDay);
 }
 </script>

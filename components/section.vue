@@ -49,8 +49,23 @@ const props = defineProps<{
 const dialog = useDialog();
 const route = useRoute();
 const store = useStore();
-const subject = store.getSubject(route.params.subject as string)!; // should be guaranteed
-const section = store.getSection(subject.code, props.code)!;
+const subject = store.getSubject(route.params.subject as string);
+if (!subject) {
+   throw createError({
+      statusCode: 404,
+      statusMessage: `Subject does not exist: ${
+         route.params.subject as string
+      }`,
+   });
+}
+
+const section = store.getSection(subject.code, props.code);
+if (!section) {
+   throw createError({
+      statusCode: 404,
+      statusMessage: `Section does not exist: ${props.code}`,
+   });
+}
 
 function navigateToTimeSlots() {
    navigateTo({
@@ -67,7 +82,7 @@ function remove() {
       positiveText: "Remove",
       negativeText: "Cancel",
       onPositiveClick(e) {
-         store.removeSection(subject.code, section.code);
+         store.removeSection(subject!.code, section!.code);
       },
    });
 }

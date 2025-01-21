@@ -124,8 +124,26 @@ const addTimeslotTo = ref("12:00 AM");
 const addTimeslotDay = ref(currentTab.value);
 const changeTimeslotDay = ref<keyof typeof daysMap>(days[0].key);
 const store = useStore();
-const subject = store.getSubject(route.params.subject as string)!;
-const section = store.getSection(subject.code, route.params.section as string)!;
+const subject = store.getSubject(route.params.subject as string);
+if (!subject) {
+   throw createError({
+      statusCode: 404,
+      statusMessage: `Subject does not exist: ${
+         route.params.subject as string
+      }`,
+   });
+}
+
+const section = store.getSection(subject.code, route.params.section as string);
+if (!section) {
+   throw createError({
+      statusCode: 404,
+      statusMessage: `Section does not exist: ${
+         route.params.section as string
+      }`,
+   });
+}
+
 const timeslotsGroupedByDay = computed(() =>
    store.getTimeslotsGroupedByDay(subject.code, section.code)
 );
@@ -169,7 +187,14 @@ function addTimeslot() {
    let day = addTimeslotDay.value;
 
    const add = () => {
-      store.addTimeslot(subject.code, section.code, Date.now(), from, to, day);
+      store.addTimeslot(
+         subject!.code,
+         section!.code,
+         Date.now(),
+         from,
+         to,
+         day
+      );
       addTimeslotFrom.value = "12:00 AM";
       addTimeslotTo.value = "12:00 AM";
       currentTab.value = addTimeslotDay.value;
@@ -216,7 +241,7 @@ function clearAll() {
       positiveText: "Clear all",
       negativeText: "Cancel",
       onPositiveClick(e) {
-         store.clearTimeslot(subject.code, section.code);
+         store.clearTimeslot(subject!.code, section!.code);
       },
    });
 }
@@ -230,7 +255,11 @@ function clearAllCurrentDay() {
       positiveText: "Clear all",
       negativeText: "Cancel",
       onPositiveClick(e) {
-         store.clearTimeslotInDay(subject.code, section.code, currentTab.value);
+         store.clearTimeslotInDay(
+            subject!.code,
+            section!.code,
+            currentTab.value
+         );
       },
    });
 }
