@@ -408,40 +408,6 @@ export const useStore = defineStore("store", () => {
       });
    }
 
-   // Load local storage
-   const router = useRouter();
-   const route = useRoute();
-   if (localStorage["s"]) {
-      try {
-         fromUrlSafeString(localStorage["s"]);
-      } catch (e) {
-         console.warn("Corrupted state!");
-      }
-   }
-
-   // Auto save through url
-   watch(
-      subjects,
-      () => {
-         const str = toUrlSafeString();
-         router.replace({ query: { ...route.query, s: str } });
-         localStorage["s"] = str; // update local storage
-      },
-      { deep: true, immediate: true }
-   );
-
-   watch(
-      route,
-      (newRoute, oldRoute) => {
-         let newState = newRoute.query.s;
-         let oldState = oldRoute?.query.s;
-         if (oldState !== newState) {
-            fromUrlSafeString(newState as string);
-         }
-      },
-      { immediate: true }
-   );
-
    return {
       subjects,
       addSubject,
@@ -465,5 +431,7 @@ export const useStore = defineStore("store", () => {
       isSectionsEmpty,
       isSectionsValid,
       isSubjectValid,
+      toUrlSafeString,
+      fromUrlSafeString,
    };
 });

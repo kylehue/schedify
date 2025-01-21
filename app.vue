@@ -20,4 +20,55 @@ import {
    darkTheme,
 } from "naive-ui";
 import "./assets/styles/main.css";
+
+// Auto save through url
+const store = useStore();
+const router = useRouter();
+const route = useRoute();
+
+function loadLocalStorageState() {
+   if (!route.path.startsWith("/subjects")) return;
+   if (localStorage["s"]) {
+      try {
+         store.fromUrlSafeString(localStorage["s"]);
+         router.replace({ query: { ...route.query, s: localStorage["s"] } });
+      } catch (e) {
+         console.warn("Error loading state!", e);
+      }
+   }
+}
+loadLocalStorageState();
+
+watch(
+   store.subjects,
+   () => {
+      if (!route.path.startsWith("/subjects")) return;
+      const str = store.toUrlSafeString();
+      router.replace({ query: { ...route.query, s: str } });
+      localStorage["s"] = str; // update local storage
+   },
+   { deep: true, immediate: true }
+);
+
+watch(
+   route,
+   (newRoute, oldRoute) => {
+      if (!route.path.startsWith("/subjects")) return;
+
+      let newState = newRoute.query.s;
+      let oldState = oldRoute?.query.s;
+
+      // If the route has no state, load local storage
+      if (!oldState && !newState) {
+         loadLocalStorageState();
+      } else {
+         // Only update store when something changed from query state
+         if (oldState !== newState) {
+            store.fromUrlSafeString(newState as string);
+         }
+         router.replace({ query: { ...route.query, s: newState } });
+      }
+   },
+   { immediate: true }
+);
 </script>

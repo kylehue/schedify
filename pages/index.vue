@@ -5,9 +5,9 @@
             <span class="title text-6xl font-semibold">Schedify</span>
             <p>Your personal tool for smarter scheduling.</p>
          </span>
-         <NuxtLink to="/subjects">
-            <NButton class="w-fit">Find my schedule</NButton>
-         </NuxtLink>
+         <NButton @click="navigateToSubjects" class="w-fit">
+            Find my schedule
+         </NButton>
       </div>
    </div>
 </template>
@@ -15,6 +15,11 @@
 <script setup lang="ts">
 import { NButton, useThemeVars } from "naive-ui";
 const theme = useThemeVars();
+function navigateToSubjects() {
+   navigateTo({
+      name: "subjects",
+   });
+}
 </script>
 
 <style scoped>
