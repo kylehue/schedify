@@ -5,7 +5,7 @@
             class="flex-1"
             v-model:formatted-value="from"
             :format="defaultTimeFormat"
-            :minutes="[0, 15, 30, 45]"
+            :minutes="[0, 30]"
             use12-hours
          ></NTimePicker>
          <NText :depth="3" class="text-nowrap">to</NText>
@@ -13,7 +13,7 @@
             class="flex-1"
             v-model:formatted-value="to"
             :format="defaultTimeFormat"
-            :minutes="[0, 15, 30, 45]"
+            :minutes="[0, 30]"
             use12-hours
          ></NTimePicker>
       </div>
