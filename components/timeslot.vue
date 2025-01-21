@@ -30,7 +30,7 @@
                      "
                      @select="(v) => changeDay(v)"
                   >
-                     <NButton tertiary> Change day </NButton>
+                     <NButton tertiary> Change day... </NButton>
                   </NDropdown>
                   <NButton
                      @click="timeslot.isEnabled = !timeslot.isEnabled"
@@ -39,7 +39,7 @@
                      {{ timeslot.isEnabled ? "Disable" : "Enable" }}
                   </NButton>
                </div>
-               <NButton @click="remove" type="error" tertiary circle>
+               <NButton @click="remove" type="error" quaternary circle>
                   <template #icon>
                      <PhTrash></PhTrash>
                   </template>

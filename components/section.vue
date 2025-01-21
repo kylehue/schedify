@@ -23,7 +23,7 @@
                   :show="!store.isTimeslotsValid(subject.code, section.code)"
                >
                   <NButton tertiary @click="navigateToTimeSlots">
-                     Edit time slots
+                     Edit time slots...
                   </NButton>
                </NBadge>
                <NButton
@@ -32,7 +32,7 @@
                   >{{ section.isEnabled ? "Disable" : "Enable" }}</NButton
                >
             </div>
-            <NButton @click="remove" type="error" tertiary circle>
+            <NButton @click="remove" type="error" quaternary circle>
                <template #icon><PhTrash></PhTrash></template>
             </NButton>
          </div>

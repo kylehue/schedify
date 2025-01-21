@@ -20,7 +20,7 @@
             <div class="flex flex-wrap gap-2">
                <NBadge dot :show="!store.isSubjectValid(subject.code)">
                   <NButton tertiary @click="navigateToSections">
-                     Edit sections
+                     Edit sections...
                   </NButton>
                </NBadge>
                <NButton
@@ -29,7 +29,7 @@
                   >{{ subject.isEnabled ? "Disable" : "Enable" }}</NButton
                >
             </div>
-            <NButton @click="remove" type="error" tertiary circle>
+            <NButton @click="remove" type="error" quaternary circle>
                <template #icon><PhTrash></PhTrash></template>
             </NButton>
          </div>

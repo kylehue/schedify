@@ -26,9 +26,8 @@
                      <template #icon><PhPlus></PhPlus></template>
                      Add a subject
                   </NButton>
-                  <NButton>
-                     <template #icon><PhSparkle></PhSparkle></template>
-                     Generate schedules
+                  <NButton @click="navigateToSchedules">
+                     Go to schedules...
                   </NButton>
                </div>
                <NButton @click="clearAll" ghost type="error">
@@ -77,6 +76,7 @@ const addSubjectCode = ref("");
 const addSubjectCodeStatus = ref<InputProps["status"]>(undefined);
 const addSubjectDescription = ref("");
 const store = useStore();
+const route = useRoute();
 console.log(store);
 
 function addSubject() {
@@ -119,6 +119,10 @@ function clearAll() {
          store.clearSubjects();
       },
    });
+}
+
+function navigateToSchedules() {
+   navigateTo({ name: "schedules", query: { s: route.query.s } });
 }
 </script>
 
