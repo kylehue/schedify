@@ -6,7 +6,102 @@ interface Pair {
    section: Section;
 }
 
-type Schedule = Pair[];
+export type Schedule = Pair[];
+
+interface Statistics {
+   earliestTime: number;
+   earliestTimeFormatted: string;
+   latestTime: number;
+   latestTimeFormatted: string;
+   totalHours: number;
+   totalHoursFormatted: string;
+   totalHoursWithVacant: number;
+   totalHoursWithVacantFormatted: string;
+   totalVacantHours: number;
+   totalVacantHoursFormatted: string;
+   maxVacantHours: number;
+   maxVacantHoursFormatted: string;
+   totalDays: number;
+   daysFormatted: string;
+}
+
+export function getStatistics(schedule: Schedule) {
+   let earliestTime = 24;
+   let latestTime = 0;
+   let maxVacantHours = 0;
+   let totalVacantHours = 0;
+   let totalHours = 0;
+   let timeslotsGroupedByDay: Record<keyof typeof daysMap, Timeslot[]> = {
+      mon: [],
+      tue: [],
+      wed: [],
+      thu: [],
+      fri: [],
+      sat: [],
+      sun: [],
+   };
+
+   for (const { subject, section } of schedule) {
+      let prevTimeslot: Timeslot | null = null;
+      // compute earliest/latest
+      for (const [_, timeslot] of section.timeslots) {
+         let from = timeToDecimal(timeslot.from);
+         let to = timeToDecimal(timeslot.to);
+         if (from < earliestTime) earliestTime = from;
+         if (to > latestTime) latestTime = to;
+         timeslotsGroupedByDay[timeslot.day].push(timeslot);
+         totalHours += Math.abs(to - from);
+         prevTimeslot = timeslot;
+      }
+   }
+
+   // compute vacant hours
+   for (let day in timeslotsGroupedByDay) {
+      let timeslots = timeslotsGroupedByDay[day as keyof typeof daysMap];
+
+      if (timeslots.length <= 1) continue; // no vacant
+
+      // sort by start time
+      timeslots.sort((a, b) => timeToDecimal(a.from) - timeToDecimal(b.from));
+
+      for (let i = 1; i < timeslots.length; i++) {
+         let prevEndTime = timeToDecimal(timeslots[i - 1].to);
+         let currentStartTime = timeToDecimal(timeslots[i].from);
+         let vacantHours = Math.abs(currentStartTime - prevEndTime);
+         totalVacantHours += vacantHours;
+         if (vacantHours > maxVacantHours) maxVacantHours = vacantHours;
+      }
+   }
+
+   let totalHoursWithVacant = totalHours + totalVacantHours;
+   let days: (string | undefined)[] = new Array(7);
+   for (let _key in timeslotsGroupedByDay) {
+      let key = _key as keyof typeof daysMap;
+      if (timeslotsGroupedByDay[key].length) {
+         days[daysIndexMap[key]] = key[0].toUpperCase();
+      }
+   }
+   let daysFormatted = days.filter((v) => !!v).join("");
+
+   const statistics: Statistics = {
+      earliestTime,
+      earliestTimeFormatted: decimalToTime(earliestTime),
+      latestTime,
+      latestTimeFormatted: decimalToTime(latestTime),
+      totalHours,
+      totalHoursFormatted: formatHours(totalHours),
+      maxVacantHours,
+      maxVacantHoursFormatted: formatHours(maxVacantHours),
+      totalVacantHours,
+      totalVacantHoursFormatted: formatHours(totalVacantHours),
+      totalHoursWithVacant,
+      totalHoursWithVacantFormatted: formatHours(totalHoursWithVacant),
+      totalDays: daysFormatted.length,
+      daysFormatted,
+   };
+
+   return statistics;
+}
 
 function createIntervalTree() {
    return new IntervalTree<Timeslot>((data) =>

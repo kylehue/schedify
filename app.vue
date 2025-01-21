@@ -26,8 +26,18 @@ const store = useStore();
 const router = useRouter();
 const route = useRoute();
 
+function pathStartsWithApp() {
+   const appPaths = ["/subjects", "/schedules"];
+
+   for (let path of appPaths) {
+      if (route.path.startsWith(path)) return true;
+   }
+
+   return false;
+}
+
 function loadLocalStorageState() {
-   if (!route.path.startsWith("/subjects")) return;
+   if (!pathStartsWithApp()) return;
    if (localStorage["s"]) {
       try {
          store.fromUrlSafeString(localStorage["s"]);
@@ -42,7 +52,7 @@ loadLocalStorageState();
 watch(
    store.subjects,
    () => {
-      if (!route.path.startsWith("/subjects")) return;
+      if (!pathStartsWithApp()) return;
       const str = store.toUrlSafeString();
       router.replace({ query: { ...route.query, s: str } });
       localStorage["s"] = str; // update local storage
@@ -53,7 +63,7 @@ watch(
 watch(
    route,
    (newRoute, oldRoute) => {
-      if (!route.path.startsWith("/subjects")) return;
+      if (!pathStartsWithApp()) return;
 
       let newState = newRoute.query.s;
       let oldState = oldRoute?.query.s;
@@ -65,8 +75,8 @@ watch(
          // Only update store when something changed from query state
          if (oldState !== newState) {
             store.fromUrlSafeString(newState as string);
+            router.replace({ query: { ...route.query, s: newState } });
          }
-         router.replace({ query: { ...route.query, s: newState } });
       }
    },
    { immediate: true }

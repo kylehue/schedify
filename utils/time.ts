@@ -8,6 +8,16 @@ export const daysMap = {
    sun: "Sunday",
 } as const;
 
+export const daysIndexMap = {
+   mon: 0,
+   tue: 1,
+   wed: 2,
+   thu: 3,
+   fri: 4,
+   sat: 5,
+   sun: 6,
+} as const;
+
 export const days = [
    {
       label: daysMap["mon"],
@@ -86,4 +96,21 @@ export function circleTimeRange(from: number, to: number): [number, number] {
    }
 
    return [from, to];
+}
+
+/**
+ * Formats a decimal number representing hours into a more readable time.
+ *
+ * @param hours The decimal number representing hours.
+ */
+export function formatHours(hours: number): string {
+   hours = Math.abs(hours);
+   const totalMinutes = Math.round(hours * 60);
+   const h = Math.floor(totalMinutes / 60);
+   const m = totalMinutes % 60;
+
+   const hoursPart = h > 0 ? `${h}h` : "";
+   const minutesPart = m > 0 ? `${m}m` : "";
+
+   return [hoursPart, minutesPart].filter(Boolean).join(" ").trim() || "none";
 }
