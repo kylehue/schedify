@@ -1,10 +1,7 @@
 <template>
    <div class="flex flex-col gap-2">
       <NDataTable :columns="columns" :data="data"></NDataTable>
-      <NCard
-         v-if="showStatistics"
-         content-class="flex flex-wrap justify-around gap-8"
-      >
+      <NCard content-class="flex flex-wrap justify-around gap-8">
          <NStatistic
             label="Earliest time"
             :value="statistics.earliestTimeFormatted"
@@ -53,10 +50,7 @@
                <NIcon><PhTimer></PhTimer></NIcon>
             </template>
          </NStatistic>
-         <NStatistic
-            label="Days"
-            :value="statistics.totalDays"
-         >
+         <NStatistic label="Days" :value="statistics.totalDays">
             <template #prefix>
                <NIcon><PhCalendarBlank></PhCalendarBlank></NIcon>
             </template>
@@ -84,8 +78,6 @@ import type { Section, Subject } from "~/types/types";
 const props = defineProps<{
    schedule: Schedule;
 }>();
-
-const showStatistics = defineModel<boolean>("showStatistics");
 
 const data = computed(() => {
    return props.schedule;

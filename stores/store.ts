@@ -359,53 +359,15 @@ export const useStore = defineStore("store", () => {
    }
 
    function toUrlSafeString() {
-      return jsonToUrlSafeString(
-         Array.from(subjects.entries()).map(([code, subject]) => ({
-            c: code,
-            d: subject.description,
-            e: subject.isEnabled,
-            s: Array.from(subject.sections.entries()).map(
-               ([secCode, section]) => ({
-                  c: secCode,
-                  d: section.description,
-                  e: section.isEnabled,
-                  t: Array.from(section.timeslots.entries()).map(
-                     ([id, timeslot]) => ({
-                        i: id,
-                        f: timeslot.from,
-                        t: timeslot.to,
-                        e: timeslot.isEnabled,
-                        d: timeslot.day,
-                     })
-                  ),
-               })
-            ),
-         }))
-      );
+      return jsonToUrlSafeString(serializeSubjects(subjects));
    }
 
    function fromUrlSafeString(str: string) {
       const data = urlSafeStringToJson(str);
       subjects.clear();
-      data.forEach((subject: any) => {
-         const newSubject = addSubject(subject.c, subject.d);
-         newSubject.isEnabled = subject.e;
-         subject.s.forEach((section: any) => {
-            const newSection = addSection(subject.c, section.c, section.d);
-            newSection.isEnabled = section.e;
-            section.t.forEach((timeslot: any) => {
-               const newTimeslot = addTimeslot(
-                  subject.c,
-                  section.c,
-                  timeslot.i,
-                  timeslot.f,
-                  timeslot.t,
-                  timeslot.d
-               );
-               newTimeslot.isEnabled = timeslot.e;
-            });
-         });
-      });
+      for (let [code, subject] of deserializeSubjects(data)) {
+         subjects.set(code, subject);
+      }
    }
 
    return {
