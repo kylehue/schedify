@@ -10,26 +10,36 @@
                   @back="() => goBack()"
                   :breadcrumbs="[]"
                ></Navigator>
-               <Filters
-                  v-model:earliest-time="earliestTime"
-                  v-model:latest-time="latestTime"
-                  v-model:max-total-hours="maxTotalHours"
-                  v-model:max-total-hours-with-vacant="maxTotalHoursWithVacant"
-                  v-model:max-total-vacant-hours="maxTotalVacantHours"
-                  v-model:max-max-vacant-hours="maxMaxVacantHours"
-                  v-model:max-total-days="maxTotalDays"
-               ></Filters>
-               <NCard content-class="flex flex-wrap gap-2 justify-end">
-                  <SortButton
-                     class="w-60"
-                     placeholder="Sort by"
-                     placement="bottom-end"
-                     default-value="earliestTime"
-                     :options="(sortOptions as any)"
-                     v-model:mode="sortMode"
-                     v-model:value="sortBy"
-                  ></SortButton>
-               </NCard>
+               <div
+                  :class="{
+                     'opacity-50': scheduleStore.schedules.length <= 0,
+                     'pointer-events-none': scheduleStore.schedules.length <= 0,
+                  }"
+                  class="flex flex-col gap-2"
+               >
+                  <Filters
+                     v-model:earliest-time="earliestTime"
+                     v-model:latest-time="latestTime"
+                     v-model:max-total-hours="maxTotalHours"
+                     v-model:max-total-hours-with-vacant="
+                        maxTotalHoursWithVacant
+                     "
+                     v-model:max-total-vacant-hours="maxTotalVacantHours"
+                     v-model:max-max-vacant-hours="maxMaxVacantHours"
+                     v-model:max-total-days="maxTotalDays"
+                  ></Filters>
+                  <NCard content-class="flex flex-wrap gap-2 justify-end">
+                     <SortButton
+                        class="w-60"
+                        placeholder="Sort by"
+                        placement="bottom-end"
+                        default-value="earliestTime"
+                        :options="(sortOptions as any)"
+                        v-model:mode="sortMode"
+                        v-model:value="sortBy"
+                     ></SortButton>
+                  </NCard>
+               </div>
             </div>
          </template>
          <template #default>
@@ -53,9 +63,7 @@
                   <NButton
                      v-if="
                         scheduleStore.loadedSchedules <
-                           scheduleStore.schedules.length -
-                              (scheduleStore.schedules.length -
-                                 schedulesFiltered.length) &&
+                           schedulesFiltered.length &&
                         scheduleStore.loadedSchedules !== 0
                      "
                      quaternary
@@ -65,9 +73,7 @@
                         Load more
                         <NText :depth="3">
                            ({{
-                              scheduleStore.schedules.length -
-                              (scheduleStore.schedules.length -
-                                 schedulesFiltered.length) -
+                              schedulesFiltered.length -
                               scheduleStore.loadedSchedules
                            }}
                            left)
