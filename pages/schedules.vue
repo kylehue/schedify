@@ -53,7 +53,9 @@
                   <NButton
                      v-if="
                         scheduleStore.loadedSchedules <
-                           scheduleStore.schedules.length &&
+                           scheduleStore.schedules.length -
+                              (scheduleStore.schedules.length -
+                                 schedulesFiltered.length) &&
                         scheduleStore.loadedSchedules !== 0
                      "
                      quaternary
@@ -64,6 +66,8 @@
                         <NText :depth="3">
                            ({{
                               scheduleStore.schedules.length -
+                              (scheduleStore.schedules.length -
+                                 schedulesFiltered.length) -
                               scheduleStore.loadedSchedules
                            }}
                            left)
@@ -139,7 +143,7 @@ const maxTotalDays = ref<number>(7);
 const scheduleStore = useScheduleStore();
 const route = useRoute();
 const isGenerating = ref(false);
-const schedulesComputed = computed(() => {
+const schedulesFiltered = computed(() => {
    let schedules = scheduleStore.schedules.slice(0);
 
    // filter
@@ -161,6 +165,12 @@ const schedulesComputed = computed(() => {
          stats.totalDays <= maxTotalDays.value
       );
    });
+
+   return schedules;
+});
+
+const schedulesComputed = computed(() => {
+   let schedules = schedulesFiltered.value.slice(0);
 
    // limit schedules to avoid lag
    if (schedules.length >= scheduleStore.loadedSchedules) {
