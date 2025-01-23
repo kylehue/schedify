@@ -256,12 +256,12 @@ export const useStore = defineStore("store", () => {
 
       let target = getTimeslot(subjectCode, sectionCode, id);
       if (!target) return false;
+      if (!target.isEnabled) return false;
 
       let targetFrom = timeToDecimal(target.from);
       let targetTo = timeToDecimal(target.to);
 
       // Base cases
-      if (targetFrom === targetTo) return true;
       let allTimeslots = timeslotsGroupedByDay[target.day];
       if (allTimeslots.length <= 1) return false;
 
@@ -272,6 +272,7 @@ export const useStore = defineStore("store", () => {
       // Insert all timeslots in interval tree except the target timeslot
       for (let timeslot of allTimeslots) {
          if (timeslot.id === target.id) continue;
+         if (!timeslot.isEnabled) continue;
          intervalTree.insert(timeslot);
       }
 
@@ -343,6 +344,7 @@ export const useStore = defineStore("store", () => {
       let subject = getSubject(subjectCode);
       if (!subject) return true;
       for (let [id, section] of subject.sections) {
+         if (!section.isEnabled) continue;
          if (!isSectionValid(subject.code, section.code)) return false;
       }
 
