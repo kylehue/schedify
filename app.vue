@@ -20,6 +20,7 @@ import {
    darkTheme,
 } from "naive-ui";
 import "./assets/styles/main.css";
+import { useStore } from "@/stores/store";
 
 // Auto save through url
 const store = useStore();

@@ -98,6 +98,8 @@
 <script setup lang="ts">
 import { NCard, NButton, NEmpty, NDivider, NText } from "naive-ui";
 import { PhSparkle } from "@phosphor-icons/vue";
+import { useScheduleStore } from "@/stores/schedule";
+import { circleTimeRange, timeToDecimal } from "@/utils/time";
 
 useHead({ title: "Schedules" });
 

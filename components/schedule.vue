@@ -86,7 +86,9 @@ import {
    PhCalendarBlank,
    PhChartLine,
 } from "@phosphor-icons/vue";
-import type { Section, Subject } from "~/types/types";
+import type { Section, Subject } from "@/types/types";
+import { getStatistics, type Schedule } from "@/utils/schedule";
+import { daysIndexMap, timeToDecimal } from "@/utils/time";
 
 const props = defineProps<{
    schedule: Schedule;

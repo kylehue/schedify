@@ -1,4 +1,5 @@
 import { generateAllPossibleSchedules } from "@/utils/schedule";
+import { deserializeSubjects } from "@/utils/serialize-subject";
 
 self.onmessage = (message) => {
    let subjects = deserializeSubjects(message.data);

@@ -1,4 +1,6 @@
-import type { Schedule } from "@/utils/schedule";
+import { getStatistics, type Schedule } from "@/utils/schedule";
+import { serializeSubjects } from "@/utils/serialize-subject";
+import { useStore } from "./store";
 export const useScheduleStore = defineStore("schedule-store", () => {
    const schedules = reactive<Schedule[]>([]);
    let preComputedStatistics = new WeakMap<
@@ -34,7 +36,7 @@ export const useScheduleStore = defineStore("schedule-store", () => {
          };
 
          scheduleWorker.onerror = (e) => {
-            reject(e.error);
+            reject(e);
 
             scheduleWorker!.terminate();
             scheduleWorker = null;

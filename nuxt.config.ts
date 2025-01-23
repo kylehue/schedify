@@ -24,4 +24,7 @@ export default defineNuxtConfig({
       },
       baseURL: "/schedify/",
    },
+   imports: {
+      scan: false,
+   },
 });

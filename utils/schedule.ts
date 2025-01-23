@@ -1,5 +1,13 @@
 import { IntervalTree } from "my-dsa";
-import type { Section, Subject, Timeslot } from "~/types/types";
+import {
+   circleTimeRange,
+   decimalToTime,
+   formatHours,
+   timeToDecimal,
+   daysMap,
+   daysIndexMap,
+} from "@/utils/time";
+import type { Section, Subject, Timeslot } from "@/types/types";
 
 interface Pair {
    subject: Subject;
@@ -102,12 +110,13 @@ export function getStatistics(schedule: Schedule) {
       totalVacantHoursMultiplier +
       totalHoursWithVacantMultiplier;
    let score =
-      1 - (totalDaysNormalized * totalDaysMultiplier +
+      1 -
+      (totalDaysNormalized * totalDaysMultiplier +
          earliestTimeNormalized * earliestTimeMultiplier +
          maxVacantHoursNormalized * maxVacantHoursMultiplier +
          totalVacantHoursNormalized * totalVacantHoursMultiplier +
          totalHoursWithVacantNormalized * totalHoursWithVacantMultiplier) /
-      possibleTotal;
+         possibleTotal;
 
    const statistics: Statistics = {
       earliestTime,

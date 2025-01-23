@@ -53,6 +53,8 @@
 <script setup lang="ts">
 import { NCard, NButton, NBadge, NDropdown, useDialog } from "naive-ui";
 import { PhTrash } from "@phosphor-icons/vue";
+import { useStore } from "@/stores/store";
+import { daysMap, days } from "@/utils/time";
 
 const props = defineProps<{
    id: string | number;

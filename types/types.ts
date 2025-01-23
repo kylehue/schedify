@@ -1,3 +1,5 @@
+import type { daysMap } from "@/utils/time";
+
 export interface Subject {
    code: string;
    description?: string;

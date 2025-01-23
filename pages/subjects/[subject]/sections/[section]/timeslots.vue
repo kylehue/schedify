@@ -114,6 +114,8 @@ import {
    useDialog,
 } from "naive-ui";
 import { PhPlus, PhTrash } from "@phosphor-icons/vue";
+import { useStore } from "@/stores/store";
+import { daysMap, days } from "@/utils/time";
 
 useHead({ title: "Time slots" });
 

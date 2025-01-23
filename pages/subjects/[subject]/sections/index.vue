@@ -78,6 +78,7 @@ import {
    type InputProps,
 } from "naive-ui";
 import { PhPlus, PhTrash } from "@phosphor-icons/vue";
+import { useStore } from "@/stores/store";
 
 useHead({ title: "Sections" });
 
