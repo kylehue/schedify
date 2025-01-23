@@ -115,6 +115,8 @@ import {
 } from "naive-ui";
 import { PhPlus, PhTrash } from "@phosphor-icons/vue";
 
+useHead({ title: "Time slots" });
+
 const route = useRoute();
 const dialog = useDialog();
 const currentTab = ref<keyof typeof daysMap>(days[0].key);

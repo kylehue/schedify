@@ -89,6 +89,8 @@
 import { NCard, NButton, NEmpty, NDivider, NText } from "naive-ui";
 import { PhSparkle } from "@phosphor-icons/vue";
 
+useHead({ title: "Schedules" });
+
 const sortOptions = [
    {
       key: "best",

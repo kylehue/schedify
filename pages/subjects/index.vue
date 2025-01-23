@@ -70,6 +70,8 @@ import {
 } from "naive-ui";
 import { PhPlus, PhTrash, PhSparkle } from "@phosphor-icons/vue";
 
+useHead({ title: "Subjects" });
+
 const dialog = useDialog();
 const isAddSubjectDialogShown = ref(false);
 const addSubjectCode = ref("");

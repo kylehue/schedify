@@ -79,6 +79,8 @@ import {
 } from "naive-ui";
 import { PhPlus, PhTrash } from "@phosphor-icons/vue";
 
+useHead({ title: "Sections" });
+
 const dialog = useDialog();
 const route = useRoute();
 const isAddSectionDialogShown = ref(false);
