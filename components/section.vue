@@ -43,6 +43,7 @@
 <script setup lang="ts">
 import { PhTrash } from "@phosphor-icons/vue";
 import { NCard, NButton, NBadge, NText, useDialog } from "naive-ui";
+import { useStore } from "@/stores/store";
 const props = defineProps<{
    code: string;
 }>();
