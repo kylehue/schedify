@@ -91,7 +91,7 @@ export function decimalToTime(decimal: number) {
  * @returns A tuple representing the adjusted time range.
  */
 export function circleTimeRange(from: number, to: number): [number, number] {
-   if (from > to) {
+   if (from >= to) {
       to += 24;
    }
 

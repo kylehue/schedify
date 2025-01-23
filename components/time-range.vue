@@ -29,26 +29,7 @@ const to = defineModel("to", { default: "12:00 AM" });
 const totalTime = computed(() => {
    const fromDecimal = timeToDecimal(from.value);
    const toDecimal = timeToDecimal(to.value);
-
-   const [adjustedFrom, adjustedTo] =
-      fromDecimal > toDecimal
-         ? [fromDecimal, toDecimal + 24]
-         : [fromDecimal, toDecimal];
-
-   const totalHours = adjustedTo - adjustedFrom;
-   const hours = Math.floor(totalHours);
-   const minutes = Math.round((totalHours - hours) * 60);
-
-   if (hours === 0 && minutes === 0) {
-      return "0 hours";
-   } else if (hours === 0) {
-      return `${minutes} minute${minutes > 1 ? "s" : ""}`;
-   } else if (minutes === 0) {
-      return `${hours} hour${hours > 1 ? "s" : ""}`;
-   }
-
-   return `${hours} hour${hours > 1 ? "s" : ""} ${minutes} minute${
-      minutes > 1 ? "s" : ""
-   }`;
+   const [adjustedFrom, adjustedTo] = circleTimeRange(fromDecimal, toDecimal);
+   return formatHours(adjustedTo - adjustedFrom);
 });
 </script>
