@@ -43,7 +43,7 @@
             </template>
          </NStatistic>
          <NStatistic
-            label="Max vacant hours"
+            label="Max vacant in a day"
             :value="statistics.maxVacantHoursFormatted"
          >
             <template #prefix>

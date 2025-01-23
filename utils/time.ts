@@ -114,3 +114,27 @@ export function formatHours(hours: number): string {
 
    return [hoursPart, minutesPart].filter(Boolean).join(" ").trim() || "none";
 }
+
+/**
+ * Parses a formatted time string back into a decimal number representing hours.
+ *
+ * @param formattedTime The formatted time string.
+ */
+export function parseHours(formattedTime: string): number {
+   if (!formattedTime || formattedTime.trim() === "none") return 0;
+
+   let totalMinutes = 0;
+
+   const regex = /(\d+)h|(\d+)m/g;
+   let match;
+   while ((match = regex.exec(formattedTime)) !== null) {
+      if (match[1]) {
+         totalMinutes += parseInt(match[1]) * 60;
+      }
+      if (match[2]) {
+         totalMinutes += parseInt(match[2]);
+      }
+   }
+
+   return totalMinutes / 60;
+}

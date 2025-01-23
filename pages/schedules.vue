@@ -4,11 +4,33 @@
    >
       <NCard content-class="min-h-[300px]">
          <template #header>
-            <Navigator
-               title="Schedules"
-               @back="() => goBack()"
-               :breadcrumbs="[]"
-            ></Navigator>
+            <div class="flex flex-col w-full gap-2">
+               <Navigator
+                  title="Schedules"
+                  @back="() => goBack()"
+                  :breadcrumbs="[]"
+               ></Navigator>
+               <Filters
+                  v-model:earliest-time="earliestTime"
+                  v-model:latest-time="latestTime"
+                  v-model:max-total-hours="maxTotalHours"
+                  v-model:max-total-hours-with-vacant="maxTotalHoursWithVacant"
+                  v-model:max-total-vacant-hours="maxTotalVacantHours"
+                  v-model:max-max-vacant-hours="maxMaxVacantHours"
+                  v-model:max-total-days="maxTotalDays"
+               ></Filters>
+               <NCard content-class="flex flex-wrap gap-2 justify-end">
+                  <SortButton
+                     class="w-60"
+                     placeholder="Sort by"
+                     placement="bottom-end"
+                     default-value="earliestTime"
+                     :options="(sortOptions as any)"
+                     v-model:mode="sortMode"
+                     v-model:value="sortBy"
+                  ></SortButton>
+               </NCard>
+            </div>
          </template>
          <template #default>
             <NEmpty
@@ -67,12 +89,72 @@
 import { NCard, NButton, NEmpty, NDivider, NText } from "naive-ui";
 import { PhSparkle } from "@phosphor-icons/vue";
 
+const sortOptions = [
+   {
+      key: "earliestTime",
+      label: "Earliest time",
+   },
+   {
+      key: "latestTime",
+      label: "Latest time",
+   },
+   {
+      key: "totalHours",
+      label: "Total hours",
+   },
+   {
+      key: "totalHoursWithVacant",
+      label: "Total hours (with vacant)",
+   },
+   {
+      key: "totalVacantHours",
+      label: "Total vacant hours",
+   },
+   {
+      key: "maxVacantHours",
+      label: "Max vacant in a day",
+   },
+   {
+      key: "totalDays",
+      label: "Total days",
+   },
+] as const;
+const sortBy = ref<(typeof sortOptions)[number]["key"]>("earliestTime");
+const sortMode = ref<"ascending" | "descending">("ascending");
+
+const earliestTime = ref<string>("12:00 AM");
+const latestTime = ref<string>("12:00 AM");
+const maxTotalHours = ref<number>(24 * 7);
+const maxTotalHoursWithVacant = ref<number>(24 * 7);
+const maxTotalVacantHours = ref<number>(24 * 7);
+const maxMaxVacantHours = ref<number>(24 * 7);
+const maxTotalDays = ref<number>(7);
+
 const scheduleStore = useScheduleStore();
 const route = useRoute();
-
 const isGenerating = ref(false);
 const schedulesComputed = computed(() => {
-   let schedules = scheduleStore.schedules;
+   let schedules = scheduleStore.schedules.slice(0);
+
+   // filter
+   schedules = schedules.filter((schedule) => {
+      const stats = scheduleStore.getPreComputedStatistics(schedule);
+      if (!stats) return true;
+      let [from, to] = circleTimeRange(stats.earliestTime, stats.latestTime);
+      let [filterFrom, filterTo] = circleTimeRange(
+         timeToDecimal(earliestTime.value),
+         timeToDecimal(latestTime.value)
+      );
+      return (
+         from >= filterFrom &&
+         to <= filterTo &&
+         stats.totalHours <= maxTotalHours.value &&
+         stats.totalHoursWithVacant <= maxTotalHoursWithVacant.value &&
+         stats.totalVacantHours <= maxTotalVacantHours.value &&
+         stats.maxVacantHours <= maxMaxVacantHours.value &&
+         stats.totalDays <= maxTotalDays.value
+      );
+   });
 
    // limit schedules to avoid lag
    if (schedules.length >= scheduleStore.loadedSchedules) {
@@ -81,6 +163,30 @@ const schedulesComputed = computed(() => {
 
    return schedules;
 });
+
+watch(
+   () => [sortBy.value, sortMode.value],
+   () => {
+      if (sortBy.value === "earliestTime") {
+         scheduleStore.sortByEarliestTime(sortMode.value === "descending");
+      } else if (sortBy.value === "latestTime") {
+         scheduleStore.sortByLatestTime(sortMode.value === "descending");
+      } else if (sortBy.value === "totalHours") {
+         scheduleStore.sortByTotalHours(sortMode.value === "descending");
+      } else if (sortBy.value === "totalHoursWithVacant") {
+         scheduleStore.sortByTotalHoursWithVacant(
+            sortMode.value === "descending"
+         );
+      } else if (sortBy.value === "totalVacantHours") {
+         scheduleStore.sortByTotalVacantHours(sortMode.value === "descending");
+      } else if (sortBy.value === "maxVacantHours") {
+         scheduleStore.sortByMaxVacantHours(sortMode.value === "descending");
+      } else if (sortBy.value === "totalDays") {
+         scheduleStore.sortByTotalDays(sortMode.value === "descending");
+      }
+   },
+   { immediate: true }
+);
 
 async function generate() {
    scheduleStore.loadedSchedules = 0;
@@ -94,5 +200,3 @@ function goBack() {
    navigateTo({ name: "subjects", query: { s: route.query.s } });
 }
 </script>
-
-<style scoped></style>
