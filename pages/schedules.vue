@@ -91,6 +91,10 @@ import { PhSparkle } from "@phosphor-icons/vue";
 
 const sortOptions = [
    {
+      key: "best",
+      label: "Best",
+   },
+   {
       key: "earliestTime",
       label: "Earliest time",
    },
@@ -119,7 +123,7 @@ const sortOptions = [
       label: "Total days",
    },
 ] as const;
-const sortBy = ref<(typeof sortOptions)[number]["key"]>("earliestTime");
+const sortBy = ref<(typeof sortOptions)[number]["key"]>("best");
 const sortMode = ref<"ascending" | "descending">("ascending");
 
 const earliestTime = ref<string>("12:00 AM");
@@ -164,26 +168,30 @@ const schedulesComputed = computed(() => {
    return schedules;
 });
 
+function sort() {
+   if (sortBy.value === "earliestTime") {
+      scheduleStore.sortByEarliestTime(sortMode.value === "descending");
+   } else if (sortBy.value === "latestTime") {
+      scheduleStore.sortByLatestTime(sortMode.value === "descending");
+   } else if (sortBy.value === "totalHours") {
+      scheduleStore.sortByTotalHours(sortMode.value === "descending");
+   } else if (sortBy.value === "totalHoursWithVacant") {
+      scheduleStore.sortByTotalHoursWithVacant(sortMode.value === "descending");
+   } else if (sortBy.value === "totalVacantHours") {
+      scheduleStore.sortByTotalVacantHours(sortMode.value === "descending");
+   } else if (sortBy.value === "maxVacantHours") {
+      scheduleStore.sortByMaxVacantHours(sortMode.value === "descending");
+   } else if (sortBy.value === "totalDays") {
+      scheduleStore.sortByTotalDays(sortMode.value === "descending");
+   } else if (sortBy.value === "best") {
+      scheduleStore.sortByBest(sortMode.value === "descending");
+   }
+}
+
 watch(
    () => [sortBy.value, sortMode.value],
    () => {
-      if (sortBy.value === "earliestTime") {
-         scheduleStore.sortByEarliestTime(sortMode.value === "descending");
-      } else if (sortBy.value === "latestTime") {
-         scheduleStore.sortByLatestTime(sortMode.value === "descending");
-      } else if (sortBy.value === "totalHours") {
-         scheduleStore.sortByTotalHours(sortMode.value === "descending");
-      } else if (sortBy.value === "totalHoursWithVacant") {
-         scheduleStore.sortByTotalHoursWithVacant(
-            sortMode.value === "descending"
-         );
-      } else if (sortBy.value === "totalVacantHours") {
-         scheduleStore.sortByTotalVacantHours(sortMode.value === "descending");
-      } else if (sortBy.value === "maxVacantHours") {
-         scheduleStore.sortByMaxVacantHours(sortMode.value === "descending");
-      } else if (sortBy.value === "totalDays") {
-         scheduleStore.sortByTotalDays(sortMode.value === "descending");
-      }
+      sort();
    },
    { immediate: true }
 );
@@ -192,6 +200,7 @@ async function generate() {
    scheduleStore.loadedSchedules = 0;
    isGenerating.value = true;
    await scheduleStore.generate();
+   sort();
    scheduleStore.loadMoreSchedules();
    isGenerating.value = false;
 }

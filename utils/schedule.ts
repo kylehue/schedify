@@ -23,6 +23,7 @@ interface Statistics {
    maxVacantHoursFormatted: string;
    totalDays: number;
    daysFormatted: string;
+   score: number;
 }
 
 export function getStatistics(schedule: Schedule) {
@@ -83,6 +84,31 @@ export function getStatistics(schedule: Schedule) {
    }
    let daysFormatted = days.filter((v) => !!v).join("");
 
+   // compute score
+   let totalDaysMultiplier = -24;
+   let maxVacantHoursMultiplier = -12;
+   let earliestTimeMultiplier = 8;
+   let totalVacantHoursMultiplier = -4;
+   let totalHoursWithVacantMultiplier = -2;
+   let totalDaysNormalized = days.length / 7;
+   let maxVacantHoursNormalized = maxVacantHours / 24;
+   let earliestTimeNormalized = earliestTime / 24;
+   let totalVacantHoursNormalized = totalVacantHours / (24 * 7);
+   let totalHoursWithVacantNormalized = totalHoursWithVacant / (24 * 7);
+   let possibleTotal =
+      totalDaysMultiplier +
+      earliestTimeMultiplier +
+      maxVacantHoursMultiplier +
+      totalVacantHoursMultiplier +
+      totalHoursWithVacantMultiplier;
+   let score =
+      1 - (totalDaysNormalized * totalDaysMultiplier +
+         earliestTimeNormalized * earliestTimeMultiplier +
+         maxVacantHoursNormalized * maxVacantHoursMultiplier +
+         totalVacantHoursNormalized * totalVacantHoursMultiplier +
+         totalHoursWithVacantNormalized * totalHoursWithVacantMultiplier) /
+      possibleTotal;
+
    const statistics: Statistics = {
       earliestTime,
       earliestTimeFormatted: decimalToTime(earliestTime),
@@ -98,6 +124,7 @@ export function getStatistics(schedule: Schedule) {
       totalHoursWithVacantFormatted: formatHours(totalHoursWithVacant),
       totalDays: daysFormatted.length,
       daysFormatted,
+      score,
    };
 
    return statistics;

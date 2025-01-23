@@ -55,6 +55,14 @@
                <NIcon><PhCalendarBlank></PhCalendarBlank></NIcon>
             </template>
          </NStatistic>
+         <NStatistic
+            label="Score"
+            :value="(statistics.score * 100).toFixed(2) + '%'"
+         >
+            <template #prefix>
+               <NIcon><PhChartLine></PhChartLine></NIcon>
+            </template>
+         </NStatistic>
       </NCard>
    </div>
 </template>
@@ -72,7 +80,12 @@ import {
    type DataTableColumns,
    type DataTableRowData,
 } from "naive-ui";
-import { PhTimer, PhClock, PhCalendarBlank } from "@phosphor-icons/vue";
+import {
+   PhTimer,
+   PhClock,
+   PhCalendarBlank,
+   PhChartLine,
+} from "@phosphor-icons/vue";
 import type { Section, Subject } from "~/types/types";
 
 const props = defineProps<{

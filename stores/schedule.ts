@@ -1,7 +1,10 @@
 import type { Schedule } from "@/utils/schedule";
 export const useScheduleStore = defineStore("schedule-store", () => {
    const schedules = reactive<Schedule[]>([]);
-   let stats = new WeakMap<Schedule, ReturnType<typeof getStatistics>>();
+   let preComputedStatistics = new WeakMap<
+      Schedule,
+      ReturnType<typeof getStatistics>
+   >();
    const store = useStore();
    const loadedSchedules = ref(0);
 
@@ -45,8 +48,8 @@ export const useScheduleStore = defineStore("schedule-store", () => {
 
    function sortByEarliestTime(descending = false) {
       schedules.sort((a, b) => {
-         let earliestTimeA = stats.get(a)?.earliestTime ?? 0;
-         let earliestTimeB = stats.get(b)?.earliestTime ?? 0;
+         let earliestTimeA = preComputedStatistics.get(a)?.earliestTime ?? 0;
+         let earliestTimeB = preComputedStatistics.get(b)?.earliestTime ?? 0;
          return descending
             ? earliestTimeB - earliestTimeA
             : earliestTimeA - earliestTimeB;
@@ -55,8 +58,8 @@ export const useScheduleStore = defineStore("schedule-store", () => {
 
    function sortByLatestTime(descending = false) {
       schedules.sort((a, b) => {
-         let latestTimeA = stats.get(a)?.latestTime ?? 0;
-         let latestTimeB = stats.get(b)?.latestTime ?? 0;
+         let latestTimeA = preComputedStatistics.get(a)?.latestTime ?? 0;
+         let latestTimeB = preComputedStatistics.get(b)?.latestTime ?? 0;
          return descending
             ? latestTimeB - latestTimeA
             : latestTimeA - latestTimeB;
@@ -65,8 +68,8 @@ export const useScheduleStore = defineStore("schedule-store", () => {
 
    function sortByTotalHours(descending = false) {
       schedules.sort((a, b) => {
-         let totalHoursA = stats.get(a)?.totalHours ?? 0;
-         let totalHoursB = stats.get(b)?.totalHours ?? 0;
+         let totalHoursA = preComputedStatistics.get(a)?.totalHours ?? 0;
+         let totalHoursB = preComputedStatistics.get(b)?.totalHours ?? 0;
          return descending
             ? totalHoursB - totalHoursA
             : totalHoursA - totalHoursB;
@@ -75,8 +78,10 @@ export const useScheduleStore = defineStore("schedule-store", () => {
 
    function sortByTotalHoursWithVacant(descending = false) {
       schedules.sort((a, b) => {
-         let totalHoursWithVacantA = stats.get(a)?.totalHoursWithVacant ?? 0;
-         let totalHoursWithVacantB = stats.get(b)?.totalHoursWithVacant ?? 0;
+         let totalHoursWithVacantA =
+            preComputedStatistics.get(a)?.totalHoursWithVacant ?? 0;
+         let totalHoursWithVacantB =
+            preComputedStatistics.get(b)?.totalHoursWithVacant ?? 0;
          return descending
             ? totalHoursWithVacantB - totalHoursWithVacantA
             : totalHoursWithVacantA - totalHoursWithVacantB;
@@ -85,8 +90,10 @@ export const useScheduleStore = defineStore("schedule-store", () => {
 
    function sortByTotalVacantHours(descending = false) {
       schedules.sort((a, b) => {
-         let totalVacantHoursA = stats.get(a)?.totalVacantHours ?? 0;
-         let totalVacantHoursB = stats.get(b)?.totalVacantHours ?? 0;
+         let totalVacantHoursA =
+            preComputedStatistics.get(a)?.totalVacantHours ?? 0;
+         let totalVacantHoursB =
+            preComputedStatistics.get(b)?.totalVacantHours ?? 0;
          return descending
             ? totalVacantHoursB - totalVacantHoursA
             : totalVacantHoursA - totalVacantHoursB;
@@ -95,8 +102,10 @@ export const useScheduleStore = defineStore("schedule-store", () => {
 
    function sortByMaxVacantHours(descending = false) {
       schedules.sort((a, b) => {
-         let maxVacantHoursA = stats.get(a)?.maxVacantHours ?? 0;
-         let maxVacantHoursB = stats.get(b)?.maxVacantHours ?? 0;
+         let maxVacantHoursA =
+            preComputedStatistics.get(a)?.maxVacantHours ?? 0;
+         let maxVacantHoursB =
+            preComputedStatistics.get(b)?.maxVacantHours ?? 0;
          return descending
             ? maxVacantHoursB - maxVacantHoursA
             : maxVacantHoursA - maxVacantHoursB;
@@ -105,14 +114,22 @@ export const useScheduleStore = defineStore("schedule-store", () => {
 
    function sortByTotalDays(descending = false) {
       schedules.sort((a, b) => {
-         let totalDaysA = stats.get(a)?.totalDays ?? 0;
-         let totalDaysB = stats.get(b)?.totalDays ?? 0;
+         let totalDaysA = preComputedStatistics.get(a)?.totalDays ?? 0;
+         let totalDaysB = preComputedStatistics.get(b)?.totalDays ?? 0;
          return descending ? totalDaysB - totalDaysA : totalDaysA - totalDaysB;
       });
    }
 
+   function sortByBest(descending = false) {
+      schedules.sort((a, b) => {
+         let scoreA = getPreComputedStatistics(a)?.score ?? 0;
+         let scoreB = getPreComputedStatistics(b)?.score ?? 0;
+         return !descending ? scoreB - scoreA : scoreA - scoreB;
+      });
+   }
+
    function getPreComputedStatistics(schedule: Schedule) {
-      return stats.get(schedule);
+      return preComputedStatistics.get(schedule);
    }
 
    // Reset loaded schedules to 5
@@ -125,9 +142,9 @@ export const useScheduleStore = defineStore("schedule-store", () => {
 
    // precompute stats
    watch(schedules, () => {
-      stats = new WeakMap();
+      preComputedStatistics = new WeakMap();
       for (let schedule of schedules) {
-         stats.set(schedule, getStatistics(schedule));
+         preComputedStatistics.set(schedule, getStatistics(schedule));
       }
    });
 
@@ -143,6 +160,7 @@ export const useScheduleStore = defineStore("schedule-store", () => {
       sortByTotalVacantHours,
       sortByMaxVacantHours,
       sortByTotalDays,
+      sortByBest,
       getPreComputedStatistics,
    };
 });
