@@ -1,6 +1,8 @@
 <template>
    <NDataTable
-      class="table !text-xs"
+      :single-line="false"
+      :single-column="false"
+      class="table"
       :columns="columns"
       :data="data"
    ></NDataTable>
@@ -65,19 +67,7 @@ const columns: DataTableColumns = [
       render(rowData: InternalRowData) {
          let from = rowData.from as number;
          let to = rowData.to as number;
-         return h(
-            "div",
-            {
-               class: "p-2",
-            },
-            [
-               h(
-                  NText,
-                  {},
-                  () => `${decimalToTime(from)} - ${decimalToTime(to)}`
-               ),
-            ]
-         );
+         return `${decimalToTime(from)} - ${decimalToTime(to)}`;
       },
    },
    ...days
@@ -92,18 +82,12 @@ const columns: DataTableColumns = [
             let pair = schedulesGroupedByTimeslot.value[d.key][from];
             if (pair) {
                return h(
-                  "div",
+                  NText,
                   {
                      class: "timeslot text-center p-2",
                      [timeslotElementSubjectAttr]: pair.subject.code,
                   },
-                  [
-                     h(
-                        NText,
-                        {},
-                        () => `${pair.subject.code} - ${pair.section.code}`
-                     ),
-                  ]
+                  () => `${pair.subject.code} - ${pair.section.code}`
                );
             }
          },
@@ -141,6 +125,17 @@ onMounted(() => {
 
 <style scoped>
 .table :deep(.n-data-table-td) {
-   padding: 0px;
+   text-align: center;
+   font-size: 0.8rem;
+}
+.table :deep(.n-data-table-th) {
+   text-align: center;
+}
+
+.table :deep(.n-data-table-td),
+.table :deep(.n-data-table-th) {
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
 }
 </style>

@@ -10,7 +10,7 @@
       </div>
    </div>
    <Modal
-      dialog-class="!w-[calc(100vw-100px)]"
+      dialog-class="!w-full"
       v-model:show="showPlottingForm"
       title="Plotting form"
    >

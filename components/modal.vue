@@ -1,5 +1,5 @@
 <template>
-   <NModal v-model:show="show" class="m-8">
+   <NModal v-model:show="show">
       <NDialog
          :title="title"
          :positive-text="positiveText"
@@ -10,6 +10,7 @@
          @positive-click="onPositiveClick"
          :show-icon="false"
          :class="dialogClass"
+         class="overflow-auto"
       >
          <template #icon><slot name="icon"></slot></template>
          <slot></slot>
