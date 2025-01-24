@@ -238,8 +238,10 @@ export const useStore = defineStore("store", () => {
    function isTimeslotsEmpty(subjectCode: string, sectionCode: string) {
       let section = getSection(subjectCode, sectionCode);
       if (!section) return true;
-      let timeslots = section.timeslots;
-      return timeslots.size <= 0;
+      let timeslots = Array.from(section.timeslots.values()).filter(
+         (t) => t.isEnabled
+      );
+      return timeslots.length <= 0;
    }
 
    /**
@@ -328,7 +330,10 @@ export const useStore = defineStore("store", () => {
    function isSectionsEmpty(subjectCode: string) {
       let subject = getSubject(subjectCode);
       if (!subject) return true;
-      return subject.sections.size <= 0;
+      let sections = Array.from(subject.sections.values()).filter(
+         (s) => s.isEnabled
+      );
+      return sections.length <= 0;
    }
 
    /**

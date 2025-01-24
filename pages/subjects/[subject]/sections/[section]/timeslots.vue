@@ -25,7 +25,9 @@
          <template #default>
             <NEmpty
                class="h-full w-full flex items-center justify-center"
-               v-if="store.isTimeslotsEmpty(subject.code, section.code)"
+               v-if="
+                  !store.getSection(subject.code, section.code)?.timeslots.size
+               "
             ></NEmpty>
             <NTabs
                v-else
