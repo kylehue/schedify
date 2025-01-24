@@ -6,7 +6,7 @@
          </NButton>
          <span>{{ props.title }}</span>
       </div>
-      <div class="flex flex-row items-center gap-2">
+      <div v-if="breadcrumbs?.length" class="flex flex-row items-center gap-2">
          <NBreadcrumb>
             <NBreadcrumbItem
                v-for="x in breadcrumbs"

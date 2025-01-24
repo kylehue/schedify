@@ -1,62 +1,45 @@
 <template>
-   <div
-      class="w-full h-full flex flex-col items-start justify-start gap-10 p-10 overflow-y-scroll"
+   <NuxtLayout
+      name="app"
+      @back="() => goBack()"
+      :breadcrumbs="[]"
+      title="Schedules"
    >
-      <NCard content-class="min-h-[300px]">
-         <template #header>
-            <div class="flex flex-col w-full gap-2">
-               <Navigator
-                  title="Schedules"
-                  @back="() => goBack()"
-                  :breadcrumbs="[]"
-               ></Navigator>
-               <div
-                  :class="{
-                     'opacity-50': scheduleStore.schedules.length <= 0,
-                     'pointer-events-none': scheduleStore.schedules.length <= 0,
-                  }"
-                  class="flex flex-col gap-2"
-               >
-                  <Filters
-                     v-model:earliest-time="earliestTime"
-                     v-model:latest-time="latestTime"
-                     v-model:max-total-hours="maxTotalHours"
-                     v-model:max-total-hours-with-vacant="
-                        maxTotalHoursWithVacant
-                     "
-                     v-model:max-total-vacant-hours="maxTotalVacantHours"
-                     v-model:max-max-vacant-hours="maxMaxVacantHours"
-                     v-model:max-total-days="maxTotalDays"
-                  ></Filters>
-                  <NCard content-class="flex flex-wrap gap-2 justify-end">
-                     <SortButton
-                        class="w-60"
-                        placeholder="Sort by"
-                        placement="bottom-end"
-                        default-value="earliestTime"
-                        :options="(sortOptions as any)"
-                        v-model:mode="sortMode"
-                        v-model:value="sortBy"
-                     ></SortButton>
-                  </NCard>
-               </div>
-            </div>
-         </template>
-         <template #default>
+      <template #header-extra>
+         <div class="flex flex-row flex-wrap gap-2">
+            <SortButton
+               class="flex-1"
+               placeholder="Sort by"
+               placement="bottom-end"
+               default-value="earliestTime"
+               :options="(sortOptions as any)"
+               v-model:mode="sortMode"
+               v-model:value="sortBy"
+            ></SortButton>
+            <NButton class="flex-1" tertiary @click="showFilters = true">
+               <template #icon><PhFunnel></PhFunnel></template>
+               Filter...
+            </NButton>
+            <NButton class="flex-1" @click="generate" :loading="isGenerating">
+               <template #icon><PhSparkle></PhSparkle></template>
+               Generate schedules
+            </NButton>
+         </div>
+      </template>
+      <template #default>
+         <div class="flex h-full justify-center">
             <NEmpty
                class="h-full w-full flex items-center justify-center"
                v-if="schedulesComputed.length <= 0"
             ></NEmpty>
-            <div v-else class="flex flex-col gap-4 w-full">
+            <div v-else class="container flex flex-col gap-4 h-fit">
                <div class="flex flex-col">
                   <template
                      v-for="(schedule, index) in schedulesComputed"
                      :key="index"
                   >
                      <Schedule :schedule="schedule"></Schedule>
-                     <NDivider
-                        v-if="index < schedulesComputed.length - 1"
-                     ></NDivider>
+                     <NDivider></NDivider>
                   </template>
                </div>
                <div class="flex justify-center items-center w-full">
@@ -82,24 +65,43 @@
                   </NButton>
                </div>
             </div>
-         </template>
-         <template #action>
-            <div class="flex flex-wrap items-center w-full justify-start gap-2">
-               <NButton @click="generate" :loading="isGenerating">
-                  <template #icon><PhSparkle></PhSparkle></template>
-                  Generate schedules
-               </NButton>
-            </div>
-         </template>
-      </NCard>
-   </div>
+         </div>
+      </template>
+   </NuxtLayout>
+   <NDrawer
+      v-model:show="showFilters"
+      placement="left"
+      :width="responsiveDrawerWidth()"
+   >
+      <NDrawerContent title="Filter">
+         <Filters
+            v-model:earliest-time="earliestTime"
+            v-model:latest-time="latestTime"
+            v-model:max-total-hours="maxTotalHours"
+            v-model:max-total-hours-with-vacant="maxTotalHoursWithVacant"
+            v-model:max-total-vacant-hours="maxTotalVacantHours"
+            v-model:max-max-vacant-hours="maxMaxVacantHours"
+            v-model:max-total-days="maxTotalDays"
+         ></Filters>
+      </NDrawerContent>
+   </NDrawer>
 </template>
 
 <script setup lang="ts">
-import { NCard, NButton, NEmpty, NDivider, NText } from "naive-ui";
-import { PhSparkle } from "@phosphor-icons/vue";
+import {
+   NCollapse,
+   NCollapseItem,
+   NButton,
+   NEmpty,
+   NDivider,
+   NText,
+   NDrawer,
+   NDrawerContent,
+} from "naive-ui";
+import { PhSparkle, PhFunnel } from "@phosphor-icons/vue";
 import { useScheduleStore } from "@/stores/schedule";
 import { circleTimeRange, timeToDecimal } from "@/utils/time";
+import { useWindowWidth } from "~/composables/useWindowWidth";
 
 useHead({ title: "Schedules" });
 
@@ -147,6 +149,7 @@ const maxTotalHoursWithVacant = ref<number>(24 * 7);
 const maxTotalVacantHours = ref<number>(24 * 7);
 const maxMaxVacantHours = ref<number>(24 * 7);
 const maxTotalDays = ref<number>(7);
+const showFilters = ref(false);
 
 const scheduleStore = useScheduleStore();
 const route = useRoute();
@@ -227,5 +230,14 @@ async function generate() {
 
 function goBack() {
    navigateTo({ name: "subjects", query: { s: route.query.s } });
+}
+
+const { windowWidth } = useWindowWidth();
+function responsiveDrawerWidth() {
+   if (windowWidth.value <= 640) {
+      return Math.min(windowWidth.value, 500) - 40;
+   } else {
+      return 500;
+   }
 }
 </script>

@@ -3,6 +3,7 @@
       :theme="darkTheme"
       class="flex items-center justify-center h-full w-full"
    >
+      <NGlobalStyle></NGlobalStyle>
       <div>
          <NuxtRouteAnnouncer />
       </div>

@@ -1,13 +1,8 @@
 <template>
-   <div
-      class="w-full h-full flex flex-col items-start justify-start gap-10 p-10 overflow-y-scroll"
-   >
-      <NCard content-class="min-h-[300px]">
-         <template #header>
-            <Navigator
-               title="Sections"
-               @back="() => goBack()"
-               :breadcrumbs="[
+   <NuxtLayout
+      name="app"
+      @back="() => goBack()"
+      :breadcrumbs="[
                   {
                      label: 'Subjects',
                      click: () => goBack(),
@@ -16,14 +11,27 @@
                      label: $route.params.subject as string,
                   },
                ]"
-            ></Navigator>
-         </template>
-         <template #default>
+      title="Sections"
+   >
+      <template #header-extra>
+         <div class="flex flex-wrap w-full justify-between gap-2">
+            <NButton class="flex-1" @click="isAddSectionDialogShown = true">
+               <template #icon><PhPlus></PhPlus></template>
+               Add a section
+            </NButton>
+            <NButton class="flex-1" @click="clearAll" tertiary type="error">
+               <template #icon><PhTrash></PhTrash></template>
+               Clear all
+            </NButton>
+         </div>
+      </template>
+      <template #default>
+         <div class="flex h-full justify-center">
             <NEmpty
                class="h-full w-full flex items-center justify-center"
                v-if="subject.sections.size <= 0"
             ></NEmpty>
-            <div v-else class="flex flex-row flex-wrap">
+            <div v-else class="container flex flex-row flex-wrap h-fit pb-8">
                <div
                   v-for="section in subject.sections.values()"
                   :key="section.code"
@@ -32,40 +40,28 @@
                   <Section :code="section.code"> </Section>
                </div>
             </div>
-         </template>
-         <template #action>
-            <div class="flex flex-wrap w-full justify-between gap-2">
-               <NButton @click="isAddSectionDialogShown = true">
-                  <template #icon><PhPlus></PhPlus></template>
-                  Add a section
-               </NButton>
-               <NButton @click="clearAll" ghost type="error">
-                  <template #icon><PhTrash></PhTrash></template>
-                  Clear all
-               </NButton>
-            </div>
-         </template>
-      </NCard>
-      <Modal
-         v-model:show="isAddSectionDialogShown"
-         title="Add a section"
-         positive-text="Add"
-         negative-text="Nevermind"
-         @positiveClick="addSection"
-      >
-         <div class="flex flex-col gap-2">
-            <NInput
-               v-model:value="addSectionCode"
-               :status="addSectionCodeStatus"
-               placeholder="Code (must be unique)"
-            ></NInput>
-            <NInput
-               v-model:value="addSectionDescription"
-               placeholder="Description (optional)"
-            ></NInput>
          </div>
-      </Modal>
-   </div>
+      </template>
+   </NuxtLayout>
+   <Modal
+      v-model:show="isAddSectionDialogShown"
+      title="Add a section"
+      positive-text="Add"
+      negative-text="Nevermind"
+      @positiveClick="addSection"
+   >
+      <div class="flex flex-col gap-2">
+         <NInput
+            v-model:value="addSectionCode"
+            :status="addSectionCodeStatus"
+            placeholder="Code (must be unique)"
+         ></NInput>
+         <NInput
+            v-model:value="addSectionDescription"
+            placeholder="Description (optional)"
+         ></NInput>
+      </div>
+   </Modal>
 </template>
 
 <script setup lang="ts">

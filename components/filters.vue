@@ -1,15 +1,5 @@
 <template>
-   <NCard
-      content-class="flex flex-wrap w-full justify-around items-center gap-2"
-   >
-      <template #header>
-         <div class="flex flex-row justify-between items-center">
-            <NText class="text-sm">Filters</NText>
-            <NButton @click="reset" circle quaternary size="small">
-               <template #icon><PhArrowCounterClockwise /></template>
-            </NButton>
-         </div>
-      </template>
+   <div class="flex flex-wrap w-full justify-around items-center gap-2">
       <div class="flex flex-col flex-1 min-w-[150px] gap-2">
          <NText :depth="3" class="text-xs flex items-center gap-2">
             <span>Earliest time</span>
@@ -150,7 +140,11 @@
             v-model:value="maxTotalDays"
          ></NInputNumber>
       </div>
-   </NCard>
+      <NButton @click="reset" tertiary class="w-full">
+         <template #icon><PhArrowCounterClockwise /></template>
+         Reset filters
+      </NButton>
+   </div>
 </template>
 
 <script setup lang="ts">

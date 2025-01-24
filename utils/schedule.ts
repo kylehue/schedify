@@ -16,7 +16,7 @@ interface Pair {
 
 export type Schedule = Pair[];
 
-interface Statistics {
+export interface ScheduleStatistics {
    earliestTime: number;
    earliestTimeFormatted: string;
    latestTime: number;
@@ -126,7 +126,7 @@ export function getStatistics(schedule: Schedule) {
          totalHoursWithVacantNormalized * totalHoursWithVacantMultiplier) /
          possibleTotal;
 
-   const statistics: Statistics = {
+   const statistics: ScheduleStatistics = {
       earliestTime,
       earliestTimeFormatted: decimalToTime(earliestTime),
       latestTime,

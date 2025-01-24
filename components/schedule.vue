@@ -1,91 +1,18 @@
 <template>
-   <div class="flex flex-col gap-2">
+   <div class="flex flex-col">
       <NDataTable :columns="columns" :data="data"></NDataTable>
-      <NCard content-class="flex flex-wrap justify-around gap-8">
-         <NStatistic
-            label="Earliest time"
-            :value="statistics.earliestTimeFormatted"
-         >
-            <template #prefix>
-               <NIcon><PhClock></PhClock></NIcon>
-            </template>
-         </NStatistic>
-         <NStatistic
-            label="Latest time"
-            :value="statistics.latestTimeFormatted"
-         >
-            <template #prefix>
-               <NIcon><PhClock></PhClock></NIcon>
-            </template>
-         </NStatistic>
-         <NStatistic
-            label="Total hours"
-            :value="statistics.totalHoursFormatted"
-         >
-            <template #prefix>
-               <NIcon><PhTimer></PhTimer></NIcon>
-            </template>
-         </NStatistic>
-         <NStatistic
-            label="Total hours (with vacant)"
-            :value="statistics.totalHoursWithVacantFormatted"
-         >
-            <template #prefix>
-               <NIcon><PhTimer></PhTimer></NIcon>
-            </template>
-         </NStatistic>
-         <NStatistic
-            label="Total vacant hours"
-            :value="statistics.totalVacantHoursFormatted"
-         >
-            <template #prefix>
-               <NIcon><PhTimer></PhTimer></NIcon>
-            </template>
-         </NStatistic>
-         <NStatistic
-            label="Max vacant in a day"
-            :value="statistics.maxVacantHoursFormatted"
-         >
-            <template #prefix>
-               <NIcon><PhTimer></PhTimer></NIcon>
-            </template>
-         </NStatistic>
-         <NStatistic label="Days" :value="statistics.totalDays">
-            <template #prefix>
-               <NIcon><PhCalendarBlank></PhCalendarBlank></NIcon>
-            </template>
-         </NStatistic>
-         <NStatistic
-            label="Score"
-            :value="(statistics.score * 100).toFixed(1) + '%'"
-         >
-            <template #prefix>
-               <NIcon><PhChartLine></PhChartLine></NIcon>
-            </template>
-         </NStatistic>
-      </NCard>
+      <Statistics class="statistics" :statistics="statistics"></Statistics>
    </div>
 </template>
 
 <script setup lang="ts">
 import {
-   NCard,
-   NButton,
    NText,
-   NInput,
-   NIcon,
-   NStatistic,
    NDataTable,
    NTag,
    type DataTableColumns,
-   type DataTableRowData,
+   useThemeVars,
 } from "naive-ui";
-import {
-   PhTimer,
-   PhClock,
-   PhCalendarBlank,
-   PhChartLine,
-} from "@phosphor-icons/vue";
 import type { Section, Subject } from "@/types/types";
 import { getStatistics, type Schedule } from "@/utils/schedule";
 import { daysIndexMap, timeToDecimal } from "@/utils/time";
@@ -97,6 +24,8 @@ const props = defineProps<{
 const data = computed(() => {
    return props.schedule;
 });
+
+const theme = useThemeVars();
 
 const statistics = computed(() => getStatistics(props.schedule));
 
@@ -152,4 +81,14 @@ const columns: DataTableColumns = [
 ];
 </script>
 
-<style scoped></style>
+<style scoped>
+.statistics {
+   background-color: v-bind("theme.tableHeaderColor");
+   border: 1px solid v-bind("theme.tableHeaderColor");
+   padding: 1.5em;
+   border-radius: v-bind("theme.borderRadius");
+   border-top-left-radius: 0px;
+   border-top-right-radius: 0px;
+   border-top: 0px;
+}
+</style>

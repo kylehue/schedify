@@ -1,13 +1,9 @@
 <template>
-   <div
-      class="w-full h-full flex flex-col items-start justify-start gap-10 p-10 overflow-y-scroll"
-   >
-      <NCard content-class="min-h-[300px]">
-         <template #header>
-            <Navigator
-               title="Time slots"
-               @back="() => goBack()"
-               :breadcrumbs="[
+   <NuxtLayout
+      name="app"
+      title="Time slots"
+      @back="() => goBack()"
+      :breadcrumbs="[
                   {
                      label: 'Subjects',
                      click: navigateToSubjects,
@@ -20,9 +16,30 @@
                      label: $route.params.section as string,
                   },
                ]"
-            ></Navigator>
-         </template>
-         <template #default>
+   >
+      <template #header-extra>
+         <div class="flex flex-wrap w-full justify-between gap-2">
+            <NButton class="flex-1" @click="isAddTimeslotDialogShown = true">
+               <template #icon><PhPlus></PhPlus></template>
+               Add a time slot
+            </NButton>
+            <NButton
+               class="flex-1"
+               @click="clearAllCurrentDay"
+               ghost
+               type="error"
+            >
+               <template #icon><PhTrash></PhTrash></template>
+               Clear all in {{ daysMap[currentTab] }}
+            </NButton>
+            <NButton class="flex-1" @click="clearAll" ghost type="error">
+               <template #icon><PhTrash></PhTrash></template>
+               Clear all
+            </NButton>
+         </div>
+      </template>
+      <template #default>
+         <div class="flex h-full justify-center">
             <NEmpty
                class="h-full w-full flex items-center justify-center"
                v-if="
@@ -34,9 +51,9 @@
                type="line"
                animated
                v-model:value="currentTab"
-               class="h-full w-full"
-               pane-class="h-full w-full"
-               pane-wrapper-class="h-full w-full"
+               class="h-fit w-full"
+               pane-class="h-fit w-full"
+               pane-wrapper-class="h-fit w-full pb-8"
             >
                <template v-for="day in days">
                   <NTabPane
@@ -64,45 +81,24 @@
                   </NTabPane>
                </template>
             </NTabs>
-         </template>
-         <template #action>
-            <div class="flex flex-wrap w-full justify-between gap-2">
-               <NButton @click="isAddTimeslotDialogShown = true">
-                  <template #icon><PhPlus></PhPlus></template>
-                  Add a time slot
-               </NButton>
-               <div class="flex flex-wrap gap-2">
-                  <NButton @click="clearAll" ghost type="error">
-                     <template #icon><PhTrash></PhTrash></template>
-                     Clear all
-                  </NButton>
-                  <NButton @click="clearAllCurrentDay" ghost type="error">
-                     <template #icon><PhTrash></PhTrash></template>
-                     Clear all in {{ daysMap[currentTab] }}
-                  </NButton>
-               </div>
-            </div>
-         </template>
-      </NCard>
-      <Modal
-         v-model:show="isAddTimeslotDialogShown"
-         title="Add a timeslot"
-         positive-text="Add"
-         negative-text="Nevermind"
-         @positiveClick="addTimeslot"
-      >
-         <div class="flex flex-col gap-2">
-            <TimeRange
-               v-model:from="addTimeslotFrom"
-               v-model:to="addTimeslotTo"
-            />
-            <NSelect
-               v-model:value="addTimeslotDay"
-               :options="days.map((v) => ({ label: v.label, value: v.key }))"
-            ></NSelect>
          </div>
-      </Modal>
-   </div>
+      </template>
+   </NuxtLayout>
+   <Modal
+      v-model:show="isAddTimeslotDialogShown"
+      title="Add a timeslot"
+      positive-text="Add"
+      negative-text="Nevermind"
+      @positiveClick="addTimeslot"
+   >
+      <div class="flex flex-col gap-2">
+         <TimeRange v-model:from="addTimeslotFrom" v-model:to="addTimeslotTo" />
+         <NSelect
+            v-model:value="addTimeslotDay"
+            :options="days.map((v) => ({ label: v.label, value: v.key }))"
+         ></NSelect>
+      </div>
+   </Modal>
 </template>
 
 <script setup lang="ts">
