@@ -209,6 +209,7 @@ export function generateAllPossibleSchedules(subjects: Map<string, Subject>) {
 
          // Find a section
          const sections = subjectSectionsMap[subject.code];
+         if (!sections.length) continue;
          for (const section of sections) {
             // Check if this section has conflict with others
             let hasConflict = false;
@@ -216,6 +217,9 @@ export function generateAllPossibleSchedules(subjects: Map<string, Subject>) {
                subjectSectionTimeslotsMap[
                   createSubjectSectionKey(subject.code, section.code)
                ];
+
+            if (!timeslots.length) continue;
+
             for (const timeslot of timeslots) {
                let [from, to] = circleTimeRange(
                   timeToDecimal(timeslot.from),
