@@ -2,7 +2,15 @@
    <NuxtLayout
       name="app"
       @back="() => goBack()"
-      :breadcrumbs="[]"
+      :breadcrumbs="[
+         {
+            label: 'Subjects',
+            click: () => goBack(),
+         },
+         {
+            label: 'Schedules',
+         },
+      ]"
       title="Schedules"
    >
       <template #header-extra>

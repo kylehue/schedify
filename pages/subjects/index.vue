@@ -120,7 +120,7 @@ function clearAll() {
 }
 
 function navigateToSchedules() {
-   navigateTo({ name: "schedules", query: { s: route.query.s } });
+   navigateTo({ name: "subjects-schedules", query: { s: route.query.s } });
 }
 </script>
 
