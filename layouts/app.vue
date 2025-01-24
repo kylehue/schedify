@@ -66,8 +66,8 @@ const topPosition = ref(0);
 let lastScrollY = 0;
 
 function handleStickyScroll() {
-   const currentScrollY = containerEl.value.scrollTop;
-   const headerHeight = headerEl.value.offsetHeight;
+   const currentScrollY = containerEl.value?.scrollTop ?? 0;
+   const headerHeight = headerEl.value?.offsetHeight ?? 0;
    if (currentScrollY > lastScrollY) {
       // Scrolling down: hide navbar
       topPosition.value = Math.max(
@@ -86,11 +86,11 @@ function handleStickyScroll() {
 }
 
 onMounted(() => {
-   containerEl.value.addEventListener("scroll", handleStickyScroll);
+   containerEl.value?.addEventListener("scroll", handleStickyScroll);
 });
 
 onBeforeUnmount(() => {
-   containerEl.value.removeEventListener("scroll", handleStickyScroll);
+   containerEl.value?.removeEventListener("scroll", handleStickyScroll);
 });
 </script>
 

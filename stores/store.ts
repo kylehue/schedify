@@ -6,9 +6,12 @@ import {
    serializeSubjects,
    deserializeSubjects,
 } from "@/utils/serialize-subject";
+import { randomColorGenerator } from "@/utils/color";
 
 export const useStore = defineStore("store", () => {
    const subjects = reactive<Map<string, Subject>>(new Map());
+   const subjectColors = reactive<Map<string, string>>(new Map());
+   const colorGenerator = randomColorGenerator();
 
    /**
     * Adds a subject.
@@ -24,6 +27,7 @@ export const useStore = defineStore("store", () => {
          sections: new Map(),
       };
       subjects.set(code, subject);
+      subjectColors.set(code, colorGenerator.next().value);
 
       return subject;
    }
@@ -380,11 +384,13 @@ export const useStore = defineStore("store", () => {
       subjects.clear();
       for (let [code, subject] of deserializeSubjects(data)) {
          subjects.set(code, subject);
+         subjectColors.set(code, colorGenerator.next().value);
       }
    }
 
    return {
       subjects,
+      subjectColors,
       addSubject,
       getSubject,
       removeSubject,

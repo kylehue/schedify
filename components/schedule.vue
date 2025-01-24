@@ -1,8 +1,21 @@
 <template>
    <div class="flex flex-col">
       <NDataTable :columns="columns" :data="data"></NDataTable>
-      <Statistics class="statistics" :statistics="statistics"></Statistics>
+      <Statistics class="table-extra p-4" :statistics="statistics"></Statistics>
+      <div class="table-extra p-4 flex justify-end">
+         <NButton @click="showPlottingForm = true" tertiary>
+            <template #icon><PhTable /></template>
+            View plotting form
+         </NButton>
+      </div>
    </div>
+   <Modal
+      dialog-class="!w-[calc(100vw-100px)]"
+      v-model:show="showPlottingForm"
+      title="Plotting form"
+   >
+      <SchedulePlot :schedule="schedule"></SchedulePlot>
+   </Modal>
 </template>
 
 <script setup lang="ts">
@@ -10,17 +23,19 @@ import {
    NText,
    NDataTable,
    NTag,
+   NButton,
    type DataTableColumns,
    useThemeVars,
 } from "naive-ui";
 import type { Section, Subject } from "@/types/types";
 import { getStatistics, type Schedule } from "@/utils/schedule";
 import { daysIndexMap, timeToDecimal } from "@/utils/time";
+import { PhTable } from "@phosphor-icons/vue";
 
 const props = defineProps<{
    schedule: Schedule;
 }>();
-
+const showPlottingForm = ref(false);
 const data = computed(() => {
    return props.schedule;
 });
@@ -82,10 +97,9 @@ const columns: DataTableColumns = [
 </script>
 
 <style scoped>
-.statistics {
+.table-extra {
    background-color: v-bind("theme.tableHeaderColor");
    border: 1px solid v-bind("theme.tableHeaderColor");
-   padding: 1.5em;
    border-radius: v-bind("theme.borderRadius");
    border-top-left-radius: 0px;
    border-top-right-radius: 0px;

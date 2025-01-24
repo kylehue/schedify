@@ -1,5 +1,5 @@
 <template>
-   <NModal v-model:show="show">
+   <NModal v-model:show="show" class="m-8">
       <NDialog
          :title="title"
          :positive-text="positiveText"
@@ -9,6 +9,7 @@
          @negative-click="show = false"
          @positive-click="onPositiveClick"
          :show-icon="false"
+         :class="dialogClass"
       >
          <template #icon><slot name="icon"></slot></template>
          <slot></slot>
@@ -21,9 +22,10 @@ import { NDialog, NModal } from "naive-ui";
 
 const props = defineProps<{
    title: string;
-   positiveText: string;
+   positiveText?: string;
    negativeText?: string;
-   onPositiveClick: () => any;
+   onPositiveClick?: () => any;
+   dialogClass?: string;
 }>();
 const show = defineModel<boolean>("show", { default: false });
 </script>
