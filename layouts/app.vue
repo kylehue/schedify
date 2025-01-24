@@ -1,37 +1,36 @@
 <template>
-   <div class="flex flex-col w-full h-full">
+   <div ref="containerEl" class="flex flex-col w-full h-full overflow-auto">
       <header
-         class="flex-none w-full px-8 py-4"
+         ref="headerEl"
+         class="flex-none w-full px-12 max-sm:px-4 max-md:px-8 py-4 z-[999] sticky"
+         :style="{
+            top: topPosition + 'px',
+         }"
          v-if="$slots.header || $slots['header-extra']"
       >
-         <div class="flex flex-col">
-            <div class="flex flex-row gap-12 items-center justify-between">
+         <div class="flex flex-col w-full">
+            <div class="flex flex-row items-center justify-between">
                <Navigator
                   :title="title"
                   @back="onBack"
                   :breadcrumbs="breadcrumbs"
-               ></Navigator>
-               <NButton
-                  v-if="isPhone"
-                  @click="showMenu = true"
-                  circle
-                  quaternary
                >
-                  <template #icon><PhList /></template>
-               </NButton>
-               <div v-else class="flex flex-row gap-2">
+                  <template v-if="isPhone" #extra>
+                     <NButton @click="showMenu = true" circle quaternary>
+                        <template #icon><PhList /></template>
+                     </NButton>
+                  </template>
+               </Navigator>
+               <div v-if="!isPhone" class="flex flex-row gap-2">
                   <slot name="header-extra"></slot>
                </div>
             </div>
             <slot name="header"></slot>
          </div>
       </header>
-      <main class="flex-1 w-full p-4 overflow-auto">
+      <main class="flex-1 w-full p-4">
          <slot></slot>
       </main>
-      <footer class="flex-none w-full p-4" v-if="$slots.footer">
-         <slot name="footer"></slot>
-      </footer>
    </div>
    <NDrawer
       v-if="isPhone"
@@ -48,17 +47,12 @@
 </template>
 
 <script setup lang="ts">
-import {
-   useThemeVars,
-   NButton,
-   NDrawer,
-   NText,
-   NDivider,
-   NDialogProvider,
-} from "naive-ui";
+import { useThemeVars, NButton, NDrawer, NText } from "naive-ui";
 import Navigator from "@/components/navigator.vue";
 import { PhList } from "@phosphor-icons/vue";
 import { useWindowWidth } from "@/composables/useWindowWidth";
+const containerEl = ref();
+const headerEl = ref();
 const theme = useThemeVars();
 const props = defineProps<{
    onBack?: InstanceType<typeof Navigator>["$props"]["onBack"];
@@ -68,19 +62,41 @@ const props = defineProps<{
 const { windowWidth } = useWindowWidth();
 const showMenu = ref(false);
 const isPhone = computed(() => windowWidth.value <= 768);
+const topPosition = ref(0);
+let lastScrollY = 0;
+
+function handleStickyScroll() {
+   const currentScrollY = containerEl.value.scrollTop;
+   const headerHeight = headerEl.value.offsetHeight;
+   if (currentScrollY > lastScrollY) {
+      // Scrolling down: hide navbar
+      topPosition.value = Math.max(
+         topPosition.value - Math.abs(currentScrollY - lastScrollY),
+         -headerHeight
+      );
+   } else {
+      // Scrolling up: show navbar
+      topPosition.value = Math.min(
+         topPosition.value + Math.abs(currentScrollY - lastScrollY),
+         0
+      );
+   }
+
+   lastScrollY = currentScrollY;
+}
+
+onMounted(() => {
+   containerEl.value.addEventListener("scroll", handleStickyScroll);
+});
+
+onBeforeUnmount(() => {
+   containerEl.value.removeEventListener("scroll", handleStickyScroll);
+});
 </script>
 
 <style scoped>
-header,
-footer {
-   background-color: v-bind("theme.actionColor");
-}
-
 header {
+   background-color: v-bind("theme.bodyColor");
    border-bottom: 1px solid v-bind("theme.borderColor");
-}
-
-footer {
-   border-top: 1px solid v-bind("theme.borderColor");
 }
 </style>
