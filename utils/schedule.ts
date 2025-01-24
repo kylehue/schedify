@@ -94,20 +94,27 @@ export function getStatistics(schedule: Schedule) {
 
    // compute score
    let totalDaysMultiplier = -24;
-   let maxVacantHoursMultiplier = -12;
-   let earliestTimeMultiplier = 8;
-   let totalVacantHoursMultiplier = -4;
+   let maxVacantHoursMultiplier = -18;
+   let earliestTimeMultiplier = 10;
+   let totalVacantHoursMultiplier = -8;
+   let latestTimeMultiplier = -6;
    let totalHoursWithVacantMultiplier = -2;
+
+   let maxHoursInADay = latestTime - earliestTime;
+   let maxHoursInAWeek = maxHoursInADay * days.length;
+
    let totalDaysNormalized = days.length / 7;
-   let maxVacantHoursNormalized = maxVacantHours / 24;
-   let earliestTimeNormalized = earliestTime / 24;
-   let totalVacantHoursNormalized = totalVacantHours / (24 * 7);
-   let totalHoursWithVacantNormalized = totalHoursWithVacant / (24 * 7);
+   let maxVacantHoursNormalized = maxVacantHours / maxHoursInADay;
+   let earliestTimeNormalized = earliestTime / latestTime;
+   let totalVacantHoursNormalized = totalVacantHours / maxHoursInAWeek;
+   let latestTimeNormalized = latestTime / 24;
+   let totalHoursWithVacantNormalized = totalHoursWithVacant / maxHoursInAWeek;
    let possibleTotal =
       totalDaysMultiplier +
       earliestTimeMultiplier +
       maxVacantHoursMultiplier +
       totalVacantHoursMultiplier +
+      latestTimeMultiplier +
       totalHoursWithVacantMultiplier;
    let score =
       1 -
@@ -115,6 +122,7 @@ export function getStatistics(schedule: Schedule) {
          earliestTimeNormalized * earliestTimeMultiplier +
          maxVacantHoursNormalized * maxVacantHoursMultiplier +
          totalVacantHoursNormalized * totalVacantHoursMultiplier +
+         latestTimeNormalized * latestTimeMultiplier +
          totalHoursWithVacantNormalized * totalHoursWithVacantMultiplier) /
          possibleTotal;
 

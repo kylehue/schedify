@@ -57,7 +57,7 @@
          </NStatistic>
          <NStatistic
             label="Score"
-            :value="(statistics.score * 100).toFixed(2) + '%'"
+            :value="(statistics.score * 100).toFixed(1) + '%'"
          >
             <template #prefix>
                <NIcon><PhChartLine></PhChartLine></NIcon>
