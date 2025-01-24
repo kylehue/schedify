@@ -5,7 +5,7 @@
          v-if="$slots.header || $slots['header-extra']"
       >
          <div class="flex flex-col">
-            <div class="flex flex-row gap-2 items-center justify-between">
+            <div class="flex flex-row gap-12 items-center justify-between">
                <Navigator
                   :title="title"
                   @back="onBack"
@@ -67,7 +67,7 @@ const props = defineProps<{
 }>();
 const { windowWidth } = useWindowWidth();
 const showMenu = ref(false);
-const isPhone = computed(() => windowWidth.value <= 640);
+const isPhone = computed(() => windowWidth.value <= 768);
 </script>
 
 <style scoped>

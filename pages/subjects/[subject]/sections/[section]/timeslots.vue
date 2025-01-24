@@ -51,7 +51,7 @@
                type="line"
                animated
                v-model:value="currentTab"
-               class="h-fit w-full"
+               class="container h-fit w-full"
                pane-class="h-fit w-full"
                pane-wrapper-class="h-fit w-full pb-8"
             >
