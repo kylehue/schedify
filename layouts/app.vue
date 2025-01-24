@@ -96,7 +96,8 @@ onBeforeUnmount(() => {
 
 <style scoped>
 header {
-   background-color: v-bind("theme.bodyColor");
+   background-color: v-bind("theme.tableHeaderColor");
+   backdrop-filter: blur(15px);
    border-bottom: 1px solid v-bind("theme.borderColor");
 }
 </style>
