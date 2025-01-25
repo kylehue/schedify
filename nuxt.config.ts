@@ -1,9 +1,14 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
    compatibilityDate: "2024-11-01",
-   devtools: { enabled: false },
+   devtools: { enabled: true },
    ssr: false,
-   modules: ["@pinia/nuxt", "@nuxtjs/tailwindcss", "nuxtjs-naive-ui"],
+   modules: [
+      "@pinia/nuxt",
+      "@nuxtjs/tailwindcss",
+      "nuxtjs-naive-ui",
+      "nuxt-gtag",
+   ],
    app: {
       head: {
          link: [
@@ -26,5 +31,9 @@ export default defineNuxtConfig({
    },
    imports: {
       scan: false,
+   },
+   gtag: {
+      enabled: process.env.NODE_ENV === "production",
+      id: "G-P43ZM81H8P",
    },
 });
