@@ -36,4 +36,12 @@ export default defineNuxtConfig({
       enabled: process.env.NODE_ENV === "production",
       id: "G-P43ZM81H8P",
    },
+   build: {
+      transpile: process.env.NODE_ENV === "production" ? ["vueuc"] : [],
+   },
+   vite: {
+      optimizeDeps: {
+         include: process.env.NODE_ENV === "development" ? ["vueuc"] : [],
+      },
+   },
 });
