@@ -11,6 +11,7 @@
       <NDialogProvider>
          <NuxtLayout>
             <NuxtPage />
+            <Lights></Lights>
          </NuxtLayout>
       </NDialogProvider>
    </NConfigProvider>
