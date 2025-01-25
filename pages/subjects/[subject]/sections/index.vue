@@ -29,9 +29,12 @@
          <div class="flex h-full justify-center">
             <NEmpty
                class="h-full w-full flex items-center justify-center"
-               v-if="subject.sections.size <= 0"
+               v-show="subject.sections.size <= 0"
             ></NEmpty>
-            <div v-else class="container flex flex-row flex-wrap h-fit pb-8">
+            <div
+               v-show="subject.sections.size > 0"
+               class="container flex flex-row flex-wrap h-fit pb-8"
+            >
                <div
                   v-for="section in subject.sections.values()"
                   :key="section.code"

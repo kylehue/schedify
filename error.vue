@@ -28,4 +28,6 @@ import { NConfigProvider, darkTheme, NButton, NText } from "naive-ui";
 const props = defineProps({
    error: Object as () => NuxtError,
 });
+
+console.error(props.error);
 </script>

@@ -38,9 +38,12 @@
          <div class="flex h-full justify-center">
             <NEmpty
                class="h-full w-full flex items-center justify-center"
-               v-if="schedulesComputed.length <= 0"
+               v-show="schedulesComputed.length <= 0"
             ></NEmpty>
-            <div v-else class="container flex flex-col gap-4 h-fit pb-8">
+            <div
+               v-show="schedulesComputed.length > 0"
+               class="container flex flex-col gap-4 h-fit pb-8"
+            >
                <div class="flex flex-col">
                   <template
                      v-for="(schedule, index) in schedulesComputed"
@@ -52,7 +55,7 @@
                </div>
                <div class="flex justify-center items-center w-full">
                   <NButton
-                     v-if="
+                     v-show="
                         scheduleStore.loadedSchedules <
                            schedulesFiltered.length &&
                         scheduleStore.loadedSchedules !== 0

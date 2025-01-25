@@ -42,12 +42,14 @@
          <div class="flex h-full justify-center">
             <NEmpty
                class="h-full w-full flex items-center justify-center"
-               v-if="
+               v-show="
                   !store.getSection(subject.code, section.code)?.timeslots.size
                "
             ></NEmpty>
             <NTabs
-               v-else
+               v-show="
+                  store.getSection(subject.code, section.code)?.timeslots.size
+               "
                type="line"
                animated
                v-model:value="currentTab"
@@ -55,12 +57,11 @@
                pane-class="h-fit w-full"
                pane-wrapper-class="h-fit w-full pb-8"
             >
-               <template v-for="day in days">
+               <template v-for="day in days" :key="day.key">
                   <NTabPane
-                     v-if="timeslotsGroupedByDay[day.key].length > 0"
+                     v-show="timeslotsGroupedByDay[day.key].length > 0"
                      :name="day.key"
                      :tab="day.label"
-                     :key="day.key"
                   >
                      <div class="flex flex-row flex-wrap">
                         <div

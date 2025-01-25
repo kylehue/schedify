@@ -31,6 +31,22 @@ const store = useStore();
 const router = useRouter();
 const route = useRoute();
 
+function localStorageSet(key: string, value: string) {
+   try {
+      localStorage.setItem(key, value);
+   } catch (error) {
+      console.error(error);
+   }
+}
+
+function localStorageGet(key: string) {
+   try {
+      return localStorage.getItem(key);
+   } catch (error) {
+      console.error(error);
+   }
+}
+
 function pathStartsWithApp() {
    const appPaths = ["/subjects", "/schedules"];
 
@@ -43,10 +59,11 @@ function pathStartsWithApp() {
 
 function loadLocalStorageState() {
    if (!pathStartsWithApp()) return;
-   if (localStorage["s"]) {
+   let state = localStorageGet("s");
+   if (state) {
       try {
-         store.fromUrlSafeString(localStorage["s"]);
-         router.replace({ query: { ...route.query, s: localStorage["s"] } });
+         store.fromUrlSafeString(state);
+         router.replace({ query: { ...route.query, s: state } });
       } catch (e) {
          console.warn("Error loading state!", e);
       }
@@ -60,7 +77,7 @@ watch(
       if (!pathStartsWithApp()) return;
       const str = store.toUrlSafeString();
       router.replace({ query: { ...route.query, s: str } });
-      localStorage["s"] = str; // update local storage
+      localStorageSet("s", str); // update local storage
    },
    { deep: true, immediate: true }
 );

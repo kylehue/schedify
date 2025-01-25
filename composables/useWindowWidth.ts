@@ -1,18 +1,26 @@
 import { ref, onMounted, onUnmounted } from "vue";
 
 export function useWindowWidth() {
-   const windowWidth = ref(window.innerWidth);
+   const windowWidth = ref(
+      typeof window !== "undefined" ? window.innerWidth : 0
+   );
 
    const updateWidth = () => {
-      windowWidth.value = window.innerWidth;
+      if (typeof window !== "undefined") {
+         windowWidth.value = window.innerWidth;
+      }
    };
 
    onMounted(() => {
-      window.addEventListener("resize", updateWidth);
+      if (typeof window !== "undefined") {
+         window.addEventListener("resize", updateWidth);
+      }
    });
 
    onUnmounted(() => {
-      window.removeEventListener("resize", updateWidth);
+      if (typeof window !== "undefined") {
+         window.removeEventListener("resize", updateWidth);
+      }
    });
 
    return {
