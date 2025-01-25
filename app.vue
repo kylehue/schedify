@@ -4,6 +4,7 @@
       class="flex items-center justify-center h-full w-full"
    >
       <NGlobalStyle></NGlobalStyle>
+      <NuxtLoadingIndicator :throttle="200" />
       <div>
          <NuxtRouteAnnouncer />
       </div>
