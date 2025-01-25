@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/kylehue/schedify/refs/heads/main/public/schedify-logo.png?token=GHSAT0AAAAAAC5AMVBWPWA35NTXJGVICPIAZ4UAMSA" width="124px"/>
+<img src="https://raw.githubusercontent.com/kylehue/schedify/refs/heads/main/public/schedify-logo.png" width="124px"/>
 </p>
 
 # Schedify
