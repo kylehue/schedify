@@ -1,7 +1,7 @@
 <template>
    <NuxtLayout name="app" :breadcrumbs="[]" title="Subjects">
       <template #header-extra>
-         <div class="flex flex-wrap w-full justify-between gap-2">
+         <div class="flex flex-wrap w-full gap-2">
             <NButton class="flex-1" @click="isAddSubjectDialogShown = true">
                <template #icon><PhPlus></PhPlus></template>
                Add a subject

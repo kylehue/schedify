@@ -10,17 +10,19 @@
       >
          <div class="flex flex-col w-full">
             <div class="flex flex-row items-center justify-between">
-               <Navigator
-                  :title="title"
-                  @back="onBack"
-                  :breadcrumbs="breadcrumbs"
-               >
-                  <template v-if="isPhone" #extra>
-                     <NButton @click="showMenu = true" circle quaternary>
-                        <template #icon><PhList /></template>
-                     </NButton>
-                  </template>
-               </Navigator>
+               <div class="flex flex-1">
+                  <Navigator
+                     :title="title"
+                     @back="onBack"
+                     :breadcrumbs="breadcrumbs"
+                  >
+                     <template v-if="isPhone" #extra>
+                        <NButton @click="showMenu = true" circle quaternary>
+                           <template #icon><PhList /></template>
+                        </NButton>
+                     </template>
+                  </Navigator>
+               </div>
                <div v-if="!isPhone" class="flex flex-row gap-2">
                   <slot name="header-extra"></slot>
                </div>
