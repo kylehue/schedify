@@ -1,7 +1,7 @@
 <template>
    <NConfigProvider
       :theme="darkTheme"
-      class="flex items-center justify-center h-full w-full"
+      class="flex items-center justify-center h-screen w-screen"
    >
       <div class="container flex items-center justify-center w-full h-full">
          <div

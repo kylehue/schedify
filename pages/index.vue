@@ -1,5 +1,5 @@
 <template>
-   <div class="container flex items-center justify-center w-full h-full">
+   <div class="container flex items-center justify-center w-screen h-screen">
       <div class="flex flex-col items-center justify-center h-fit w-fit gap-4">
          <img :src="logo" class="size-24"></img>
          <span class="flex flex-col items-center justify-center">

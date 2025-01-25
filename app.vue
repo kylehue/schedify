@@ -9,7 +9,9 @@
          <NuxtRouteAnnouncer />
       </div>
       <NDialogProvider>
-         <NuxtPage />
+         <NuxtLayout>
+            <NuxtPage />
+         </NuxtLayout>
       </NDialogProvider>
    </NConfigProvider>
 </template>

@@ -1,5 +1,5 @@
 <template>
-   <div ref="containerEl" class="flex flex-col w-full h-full overflow-auto">
+   <div ref="containerEl" class="flex flex-col w-screen h-screen overflow-auto">
       <header
          ref="headerEl"
          class="flex-none w-full px-12 max-sm:px-4 max-md:px-8 py-4 z-[999] sticky"

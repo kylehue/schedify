@@ -8,7 +8,7 @@
       "generate": "nuxt generate",
       "preview": "nuxt preview",
       "postinstall": "nuxt prepare",
-      "deploy": "npx nuxt build --preset github_pages && npx gh-pages --dotfiles -d ./.output/public"
+      "deploy": "cross-env NUXT_APP_BASE_URL=/schedify/ NUXT_SSR=false npx nuxt build --preset github_pages && npx gh-pages --dotfiles -d ./.output/public"
    },
    "dependencies": {
       "@phosphor-icons/vue": "^2.2.1",
@@ -24,6 +24,7 @@
       "@nuxtjs/tailwindcss": "^6.13.1",
       "@pinia/nuxt": "^0.9.0",
       "@types/pako": "^2.0.3",
+      "cross-env": "^7.0.3",
       "gh-pages": "^6.3.0",
       "nuxt-gtag": "^3.0.2"
    }

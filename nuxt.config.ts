@@ -2,7 +2,7 @@
 export default defineNuxtConfig({
    compatibilityDate: "2024-11-01",
    devtools: { enabled: true },
-   ssr: false,
+   ssr: process.env.NUXT_SSR === "false" ? false : true,
    modules: [
       "@pinia/nuxt",
       "@nuxtjs/tailwindcss",
@@ -27,7 +27,7 @@ export default defineNuxtConfig({
             },
          ],
       },
-      baseURL: "/schedify/",
+      baseURL: process.env.NUXT_APP_BASE_URL || "/",
    },
    imports: {
       scan: false,
