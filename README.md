@@ -5,4 +5,4 @@
 # Schedify
 A simple web app to find convenient schedules.
 
-### [Try it here](https://kylehue.github.io/schedify/)
+### [Try it here](https://www.schedify.me/)
