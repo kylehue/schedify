@@ -7,8 +7,12 @@
             <img :src="logo" class="w-full h-full" />
          </div>
          <div class="flex flex-col items-center justify-center gap-4 z-10">
-            <div class="flex flex-col items-start justify-center">
-               <NText class="title text-7xl font-semibold">Schedify</NText>
+            <div class="flex flex-col items-center justify-center text-center">
+               <NText
+                  class="title text-7xl max-md:text-6xl max-sm:text-5xl font-semibold"
+               >
+                  Schedify
+               </NText>
                <NText>Your personal tool for better scheduling</NText>
             </div>
             <NButton
