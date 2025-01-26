@@ -76,7 +76,16 @@ import {
 import { PhPlus, PhTrash } from "@phosphor-icons/vue";
 import { useStore } from "@/stores/store";
 
-useHead({ title: "Sections" });
+useHead({
+   title: "Sections",
+   meta: [
+      {
+         name: "description",
+         content:
+            "Manage sections for your subjects. Add, view, and clear sections easily with Schedify.",
+      },
+   ],
+});
 
 const dialog = useDialog();
 const route = useRoute();

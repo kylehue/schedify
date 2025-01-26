@@ -66,7 +66,16 @@ import {
 import { PhPlus, PhTrash, PhSparkle } from "@phosphor-icons/vue";
 import { useStore } from "@/stores/store";
 
-useHead({ title: "Subjects" });
+useHead({
+   title: "Subjects",
+   meta: [
+      {
+         name: "description",
+         content:
+            "Manage your subjects easily with Schedify. Effortlessly add, view, and clear subjects with ease.",
+      },
+   ],
+});
 
 const dialog = useDialog();
 const isAddSubjectDialogShown = ref(false);

@@ -114,7 +114,16 @@ import { PhPlus, PhTrash } from "@phosphor-icons/vue";
 import { useStore } from "@/stores/store";
 import { daysMap, days } from "@/utils/time";
 
-useHead({ title: "Time slots" });
+useHead({
+   title: "Time slots",
+   meta: [
+      {
+         name: "description",
+         content:
+            "Manage and organize time slots for your subjects and sections. Add, edit, and clear time slots with ease.",
+      },
+   ],
+});
 
 const route = useRoute();
 const dialog = useDialog();

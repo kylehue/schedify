@@ -111,7 +111,16 @@ import { useScheduleStore } from "@/stores/schedule";
 import { circleTimeRange, timeToDecimal } from "@/utils/time";
 import { useWindowSize } from "@/composables/useWindowSize";
 
-useHead({ title: "Schedules" });
+useHead({
+   title: "Schedules",
+   meta: [
+      {
+         name: "description",
+         content:
+            "View and generate schedules for your subjects. Filter and sort schedules based on various criteria to find the best fit for you.",
+      },
+   ],
+});
 
 const sortOptions = [
    {

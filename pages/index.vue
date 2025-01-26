@@ -13,7 +13,7 @@
                >
                   Schedify
                </NText>
-               <NText>Your personal tool for better scheduling</NText>
+               <NText>Your personal tool for better class scheduling</NText>
             </div>
             <NButton
                ghost
@@ -33,7 +33,16 @@
 import { NButton, NText, useThemeVars } from "naive-ui";
 import logo from "@/public/schedify-logo.png";
 
-useHead({ title: "Schedify" });
+useHead({
+   title: "Schedify",
+   meta: [
+      {
+         name: "description",
+         content:
+            "Schedify is your personal tool for better class scheduling. Find convenient schedules easily with our simple web app.",
+      },
+   ],
+});
 
 const theme = useThemeVars();
 
