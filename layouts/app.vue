@@ -16,14 +16,14 @@
                      @back="onBack"
                      :breadcrumbs="breadcrumbs"
                   >
-                     <template v-if="isPhone" #extra>
+                     <template v-if="isMobile" #extra>
                         <NButton @click="showMenu = true" circle quaternary>
                            <template #icon><PhList /></template>
                         </NButton>
                      </template>
                   </Navigator>
                </div>
-               <div v-if="!isPhone" class="flex flex-row gap-2">
+               <div v-if="!isMobile" class="flex flex-row gap-2">
                   <slot name="header-extra"></slot>
                </div>
             </div>
@@ -35,7 +35,7 @@
       </main>
    </div>
    <NDrawer
-      v-if="isPhone"
+      v-if="isMobile"
       width="100%"
       height="fit-content"
       placement="top"
@@ -52,7 +52,7 @@
 import { useThemeVars, NButton, NDrawer, NText } from "naive-ui";
 import Navigator from "@/components/navigator.vue";
 import { PhList } from "@phosphor-icons/vue";
-import { useWindowWidth } from "@/composables/useWindowWidth";
+import { useDevice } from "@/composables/useDevice";
 const containerEl = ref();
 const headerEl = ref();
 const theme = useThemeVars();
@@ -61,9 +61,8 @@ const props = defineProps<{
    breadcrumbs?: InstanceType<typeof Navigator>["$props"]["breadcrumbs"];
    title: InstanceType<typeof Navigator>["$props"]["title"];
 }>();
-const { windowWidth } = useWindowWidth();
+const { isMobile } = useDevice();
 const showMenu = ref(false);
-const isPhone = computed(() => windowWidth.value <= 768);
 const topPosition = ref(0);
 let lastScrollY = 0;
 

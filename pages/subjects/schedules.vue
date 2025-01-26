@@ -109,7 +109,7 @@ import {
 import { PhSparkle, PhFunnel } from "@phosphor-icons/vue";
 import { useScheduleStore } from "@/stores/schedule";
 import { circleTimeRange, timeToDecimal } from "@/utils/time";
-import { useWindowWidth } from "~/composables/useWindowWidth";
+import { useWindowSize } from "@/composables/useWindowSize";
 
 useHead({ title: "Schedules" });
 
@@ -240,7 +240,7 @@ function goBack() {
    navigateTo({ name: "subjects", query: { s: route.query.s } });
 }
 
-const { windowWidth } = useWindowWidth();
+const { width: windowWidth } = useWindowSize();
 function responsiveDrawerWidth() {
    if (windowWidth.value <= 640) {
       return Math.min(windowWidth.value, 500) - 40;
